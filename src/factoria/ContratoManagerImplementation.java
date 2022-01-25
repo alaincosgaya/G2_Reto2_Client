@@ -59,7 +59,7 @@ public class ContratoManagerImplementation implements ContratoInterface {
     @Override
     public Collection<ContratoEntity> getContratosGranja(String idGranja) {
         List<ContratoEntity> contratos = null;
-        contratos = webClient.contratosTrabajador(new GenericType<List<ContratoEntity>>() {
+        contratos = webClient.contratosGranja(new GenericType<List<ContratoEntity>>() {
         }, idGranja);
         return contratos;
     }

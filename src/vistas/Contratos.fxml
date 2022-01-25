@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="paneContratos" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.Ventana_contratosController">
+<BorderPane fx:id="paneContratos" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ContratosController">
    
     <top>
         <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" styleClass="background" BorderPane.alignment="CENTER">

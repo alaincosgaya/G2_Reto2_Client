@@ -10,10 +10,12 @@ import clases.ContratoId;
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
 import factoria.ContratoManagerImplementation;
+import static factoria.TrabajadorManagerFactory.getTrabajadorManagerImplementation;
 import interfaces.ContratoInterface;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -65,6 +67,8 @@ public class ContratarTrabajadorController {
     @FXML
     private Button btnAtras;
 
+    private boolean boolTrabajador;
+
     /**
      * El metodo que indica el stage.
      *
@@ -91,10 +95,11 @@ public class ContratarTrabajadorController {
         GranjaClient webClientGranja = new GranjaClient();
         contratoManager = new ContratoManagerImplementation();
 
-        datePickerContrato.setValue(Optional.ofNullable(datePickerContrato.getValue()).orElse(LocalDate.now()));
-
-        cBoxTrabajador.getSelectionModel().selectedItemProperty().addListener(this::filtradoGranjas);
-
+        // datePickerContrato.setValue(Optional.ofNullable(datePickerContrato.getValue()).orElse(LocalDate.now()));
+        cBoxTrabajador.getSelectionModel().selectedItemProperty().addListener(this::handleSeleccionTrabajador);
+        if (!boolTrabajador) {
+            cBoxTrabajador.setItems(FXCollections.observableArrayList(getTrabajadorManagerImplementation().getAllTrabajadores()));
+        }
         cBoxGranja.setItems(FXCollections.observableArrayList(webClientGranja.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
 
         }, "g1")));
@@ -104,32 +109,39 @@ public class ContratarTrabajadorController {
         btnAtras.setOnAction(this::volverContratos);
         btnContratar.setOnAction(this::contratarTrabajador);
         //stage.setOnCloseRequest(this::confirmClose);
-        stage.show();
 
     }
 
-    public void filtradoGranjas(ObservableValue ov, Object oldValue, Object newValue) {
+    public void handleSeleccionTrabajador(ObservableValue ov, Object oldValue, Object newValue) {
+        if (newValue != null && newValue != oldValue) {
+            filtradoGranjas((TrabajadorEntity) newValue);
 
+        }
     }
 
     public void filtradoTrabajadores(ObservableValue ov, Object oldValue, Object newValue) {
-        cBoxTrabajador.getSelectionModel().clearSelection();
-        if (newValue != null) {
-
-            TrabajadorClient webClientTrabajador = new TrabajadorClient();
+        if (newValue != null && newValue != oldValue) {
+            TrabajadorEntity trabajador;
+            Collection trabajadores;
+            trabajador = cBoxTrabajador.getSelectionModel().getSelectedItem();
+            System.out.println(trabajador);
             String idGranja = String.valueOf(((GranjaEntity) newValue).getIdGranja());
-            cBoxTrabajador.getItems().clear();
-            cBoxTrabajador.setItems(FXCollections.observableArrayList(webClientTrabajador.trabajadoresParaContratar(new GenericType<List<TrabajadorEntity>>() {
-            }, idGranja)));
+            trabajadores = getTrabajadorManagerImplementation().getTrabajadoresPorContratar(idGranja);
+            if (!trabajadores.contains(trabajador)) {
+                cBoxTrabajador.getSelectionModel().clearSelection();
+
+                cBoxTrabajador.getItems().clear();
+                cBoxTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
+            }
 
         }
     }
 
     public void camposReportados() {
         btnContratar.disableProperty().bind(
-                cBoxTrabajador.selectionModelProperty().isNull().or(
-                        cBoxGranja.selectionModelProperty().isNull().or(
-                                datePickerContrato.editorProperty().isNull().or(
+                cBoxTrabajador.valueProperty().isNull().or(
+                        cBoxGranja.valueProperty().isNull().or(
+                                datePickerContrato.valueProperty().isNull().or(
                                         txtSalario.textProperty().isEmpty())))
         );
     }
@@ -140,16 +152,17 @@ public class ContratarTrabajadorController {
         idContrato.setTrabajadorId(cBoxTrabajador.getSelectionModel().getSelectedItem().getId());
         ContratoEntity contrato;
 
-       /* contrato = new ContratoEntity(idContrato, cBoxTrabajador.getValue(),
+        /* contrato = new ContratoEntity(idContrato, cBoxTrabajador.getValue(),
                 cBoxGranja.getValue(), Date.valueOf(datePickerContrato.getValue()),
                 Long.parseLong(txtSalario.getText()));*/
-       
-       contrato = new ContratoEntity();
-       contrato.setIdContrato(idContrato);
-       contrato.setGranja(cBoxGranja.getSelectionModel().getSelectedItem());
-       contrato.setTrabajador(cBoxTrabajador.getSelectionModel().getSelectedItem());
-       contrato.setFechaContratacion(Date.valueOf(datePickerContrato.getValue()));
-       contrato.setSalario(Long.parseLong(txtSalario.getText()));
+        System.out.println(cBoxTrabajador.getSelectionModel().getSelectedItem());
+        contrato = new ContratoEntity();
+        contrato.setIdContrato(idContrato);
+        contrato.setGranja(cBoxGranja.getSelectionModel().getSelectedItem());
+        contrato.setTrabajador(cBoxTrabajador.getSelectionModel().getSelectedItem());
+        contrato.setFechaContratacion(String.valueOf(datePickerContrato.getValue()));
+        contrato.setSalario(Long.parseLong(txtSalario.getText()));
+
         contratoManager.contratarTrabajador(contrato);
 
         cBoxTrabajador.getSelectionModel().clearSelection();
@@ -160,7 +173,7 @@ public class ContratarTrabajadorController {
 
     public void volverContratos(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/Ventana_contratos.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/Contratos.fxml"));
             // Se carga el FXML de Session
             Parent root;
 
@@ -176,6 +189,36 @@ public class ContratarTrabajadorController {
             //  paneVentana.getScene().getWindow().hide();
         } catch (IOException ex) {
             Logger.getLogger(ContratarTrabajadorController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    public void trabajadorSeleccionado(TrabajadorEntity selectedItem, boolean vTrabajador) {
+        boolTrabajador = vTrabajador;
+        System.out.println(selectedItem);
+        cBoxTrabajador.setItems(FXCollections.observableArrayList(selectedItem));
+        cBoxTrabajador.getSelectionModel().select(selectedItem);
+        cBoxTrabajador.setValue(selectedItem);
+
+        filtradoGranjas(selectedItem);
+
+    }
+
+    public void filtradoGranjas(TrabajadorEntity select) {
+        GranjaClient webClientGranja = new GranjaClient();
+        GranjaEntity granja;
+        Collection granjas;
+        granja = cBoxGranja.getSelectionModel().getSelectedItem();
+        String idTrabajador = String.valueOf(select.getId());
+        granjas = webClientGranja.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
+
+        }, "g1");
+        if (!granjas.contains(granja)) {
+
+            cBoxGranja.getSelectionModel().clearSelection();
+
+            cBoxGranja.getItems().clear();
+            cBoxGranja.setItems(FXCollections.observableArrayList(granjas));
         }
     }
 }

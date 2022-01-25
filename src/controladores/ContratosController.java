@@ -1,9 +1,12 @@
 package controladores;
 
 import clases.ContratoEntity;
+import clases.ContratoId;
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
+import static factoria.ContratoManagerFactory.getContratoManagerImplementation;
 import factoria.ContratoManagerImplementation;
+import static factoria.TrabajadorManagerFactory.getTrabajadorManagerImplementation;
 import interfaces.ContratoInterface;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -14,6 +17,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,6 +26,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -31,12 +36,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.LongStringConverter;
 import javax.ws.rs.core.GenericType;
+import restful.GranjaClient;
 import restful.TrabajadorClient;
 
 /**
@@ -78,7 +86,19 @@ public class ContratosController {
 
     private ObservableList<ContratoEntity> contratos;
 
+    private ObservableList granjas;
+
+    private ObservableList trabajadores;
+
+    private ContratoEntity contratoInsert;
+
+    private ContratoId idContrato;
+
+    private boolean contratar;
+
     private ObservableList opciones;
+    
+    
 
     /**
      * El metodo que indica el stage.
@@ -102,32 +122,51 @@ public class ContratosController {
         stage.setTitle("Contratos");
         stage.setScene(scene);
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
+        contratar = false;
         // Listener de los campos
-        contratoManager = new ContratoManagerImplementation();
+        contratoManager = getContratoManagerImplementation();
         tablaContratos.setEditable(true);
-        colTrabajador.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTrabajador().getUsername()));
-        colGranja.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getGranja().getNombreGranja()));
+        //colTrabajador.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTrabajador().getUsername()));
+        //colGranja.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getGranja().getNombreGranja()));
+
+        // Vincular columnas con el valor correspondiente.
+        colTrabajador.setCellValueFactory(new PropertyValueFactory<>("trabajador"));
+        colGranja.setCellValueFactory(new PropertyValueFactory<>("granja"));
+
         colFechaCon.setCellValueFactory(new PropertyValueFactory<>("fechaContratacion"));
         colSalario.setCellValueFactory(new PropertyValueFactory<>("salario"));
         colSalario.setCellFactory(TextFieldTableCell.forTableColumn(new LongStringConverter()));
+        // Definir opciones de filtrado.
         cBoxFiltro.setItems(FXCollections.observableArrayList(
                 "Trabajador",
                 "Granja",
                 "Todos"
         ));
 
+        // Listener de las ComboBox.
         cBoxFiltro.getSelectionModel().selectedItemProperty().addListener(this::handleCambioFiltro);
         cBoxOpcion.getSelectionModel().selectedItemProperty().addListener(this::handleOpcionSeleccionada);
+        // Listener de los botones.
         btnBuscar.setOnAction(this::buscarContratos);
         btnContratar.setOnAction(this::contratarTrabajador);
         btnInsert.setOnAction(this::insertarFila);
 
         btnDespedir.setOnAction(this::despedirTrabajador);
-        // Metodo de vinculacion de campos
+        // Confirmacion de cerrado
         stage.setOnCloseRequest(this::confirmClose);
+        // Listener de cambios en las celdas de la tabla.
         colSalario.setOnEditCommit(this::modificarSalario);
+        colTrabajador.setOnEditCommit(this::guardarTrabajador);
+        colGranja.setOnEditCommit(this::guardarGranja);
+        colFechaCon.setOnEditCommit(this::guardarFecha);
 
-        cambiarFormatoFecha();
+        colSalario.setOnEditCancel(this::cancelarEdicion);
+        colTrabajador.setOnEditCancel(this::cancelarEdicion);
+        colGranja.setOnEditCancel(this::cancelarEdicion);
+        colFechaCon.setOnEditCancel(this::cancelarEdicion);
+        
+
+        //cambiarFormatoFecha();
         // Control de seleccion de fila
         tablaContratos.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -136,6 +175,7 @@ public class ContratosController {
                 btnDespedir.setDisable(true);
             }
         });
+
         stage.show();
 
     }
@@ -152,6 +192,7 @@ public class ContratosController {
 
             String filtro = cBoxFiltro.getValue();
             TrabajadorClient webClientTrabajador = new TrabajadorClient();
+            GranjaClient webClientGranja = new GranjaClient();
             btnBuscar.setDisable(true);
             cBoxOpcion.setDisable(false);
             cBoxOpcion.setItems(null);
@@ -165,6 +206,10 @@ public class ContratosController {
                     cargarDatosFiltrado(lista);
                     break;
                 case ("Granja"):
+
+                    lista = webClientGranja.findAll_XML(new GenericType<List<GranjaEntity>>() {
+                    });
+                    cargarDatosFiltrado(lista);
                     break;
                 case ("Todos"):
                     btnBuscar.setDisable(false);
@@ -258,6 +303,9 @@ public class ContratosController {
                 contratos = contratoManager.getContratosTrabajador(id);
                 break;
             case ("Granja"):
+                id = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
+                contratos = contratoManager.getContratosGranja(id);
+
                 break;
             case ("Todos"):
                 contratos = contratoManager.getAllContratos();
@@ -279,6 +327,7 @@ public class ContratosController {
 
         tablaContratos.setItems(contratos);
         cBoxOpcion.getSelectionModel().clearSelection();
+        btnBuscar.setDisable(true);
     }
 
     @FXML
@@ -297,7 +346,7 @@ public class ContratosController {
             controller.setStage(stage);
             LOGGER.info("Inicio del stage de Session");
             controller.initStage(root);
-
+            
             //  paneVentana.getScene().getWindow().hide();
         } catch (IOException ex) {
             Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
@@ -325,17 +374,41 @@ public class ContratosController {
 
     @FXML
     public void insertarFila(ActionEvent event) {
-
-        tablaContratos.getItems().add(new ContratoEntity());
-        tablaContratos.getSelectionModel().focus(tablaContratos.getItems().size());
+        if (!contratar) {
+            contratar = true;
+            colFechaCon.setEditable(true);
+            colTrabajador.setEditable(true);
+            colGranja.setEditable(true);
+            contratoInsert = new ContratoEntity();
+            idContrato = new ContratoId();
+            cargarTrabajadoresColumn();
+            cargarGranjasColumn();
+            colFechaCon.setCellFactory(TextFieldTableCell.forTableColumn());
+            tablaContratos.getItems().add(new ContratoEntity());
+            tablaContratos.getSelectionModel().select(tablaContratos.getItems().size());
+            tablaContratos.getFocusModel().focus(tablaContratos.getItems().size(), colTrabajador);
+        } else {
+            contratar = false;
+            contratoInsert.setIdContrato(idContrato);
+            contratoManager.contratarTrabajador(contratoInsert);
+            colFechaCon.setEditable(false);
+            colTrabajador.setEditable(false);
+            colGranja.setEditable(false);
+            tablaContratos.refresh();
+        }
     }
 
     @FXML
     public void modificarSalario(Event event) {
-        ContratoEntity contrato = (ContratoEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String salario = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        contratoManager.cambiarSueldo(String.valueOf(contrato.getIdContrato().getTrabajadorId()),
-                String.valueOf(contrato.getIdContrato().getGranjaId()), salario);
+        if (!contratar) {
+
+            ContratoEntity contrato = (ContratoEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            String salario = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            contratoManager.cambiarSueldo(String.valueOf(contrato.getIdContrato().getTrabajadorId()),
+                    String.valueOf(contrato.getIdContrato().getGranjaId()), salario);
+        } else {
+            contratoInsert.setSalario((Long) ((TableColumn.CellEditEvent) event).getNewValue());
+        }
 
     }
 
@@ -364,6 +437,49 @@ public class ContratosController {
             };
             return cell;
         });
+    }
+
+    public void cargarTrabajadoresColumn() {
+        TrabajadorClient webClientTrabajador = new TrabajadorClient();
+
+        trabajadores = FXCollections.observableArrayList(getTrabajadorManagerImplementation().getAllTrabajadores());
+        colTrabajador.setCellFactory(ComboBoxTableCell.forTableColumn(trabajadores));
+        
+
+    }
+
+    public void cargarGranjasColumn() {
+        GranjaClient webClientTrabajador = new GranjaClient();
+        granjas = FXCollections.observableArrayList(webClientTrabajador.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
+        }, "g1"));
+        colGranja.setCellFactory(ComboBoxTableCell.forTableColumn(granjas));
+
+    }
+
+    public void guardarTrabajador(Event event) {
+        contratoInsert.setTrabajador((TrabajadorEntity) ((TableColumn.CellEditEvent) event).getNewValue());
+        idContrato.setTrabajadorId(((TrabajadorEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getId());
+
+    }
+
+    public void guardarGranja(Event event) {
+        contratoInsert.setGranja((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue());
+        idContrato.setTrabajadorId(((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getIdGranja());
+
+    }
+
+    public void guardarFecha(Event event) {
+        contratoInsert.setFechaContratacion((String) ((TableColumn.CellEditEvent) event).getNewValue());
+    }
+
+    public void cancelarEdicion(Event event) {
+        contratar = false;
+        colFechaCon.setEditable(false);
+        colTrabajador.setEditable(false);
+        colGranja.setEditable(false);
+
+        tablaContratos.refresh();
+
     }
 
 }

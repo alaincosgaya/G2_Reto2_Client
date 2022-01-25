@@ -44,19 +44,19 @@ public class TrabajadorClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T find(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T find(GenericType<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findRange(Class<T> responseType, String from, String to) throws ClientErrorException {
+    public <T> T findRange(GenericType<T> responseType, String from, String to) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T trabajadoresZona(Class<T> responseType, String idZona) throws ClientErrorException {
+    public <T> T trabajadoresZona(GenericType<T> responseType, String idZona) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("zonas/{0}", new Object[]{idZona}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -68,7 +68,7 @@ public class TrabajadorClient {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T trabajadoresGranja(Class<T> responseType, String idGranja) throws ClientErrorException {
+    public <T> T trabajadoresGranja(GenericType<T> responseType, String idGranja) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("contratados/{0}", new Object[]{idGranja}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -78,7 +78,7 @@ public class TrabajadorClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T trabajadoresAsignarZona(Class<T> responseType, String idZona, String idGranja) throws ClientErrorException {
+    public <T> T trabajadoresAsignarZona(GenericType<T> responseType, Long idZona, Long idGranja) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("trabajadoresAsignarZona/{0}/{1}", new Object[]{idZona, idGranja}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -93,7 +93,7 @@ public class TrabajadorClient {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T registro(Class<T> responseType) throws ClientErrorException {
+    public <T> T registro(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("registro");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

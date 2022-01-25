@@ -9,22 +9,17 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="paneSignUp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane fx:id="paneTrabajador" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.TrabajadoresController">
    
     <top>
       <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" styleClass="background" BorderPane.alignment="CENTER">
          
           <children>
-            <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@/photos/descargas-removebg-preview.png" />
-               </image>
-            </ImageView>
+           
             
             <Label layoutX="41.0" layoutY="11.0" prefHeight="17.0" prefWidth="86.0" text="Lauserri" />
          </children>
@@ -36,9 +31,12 @@
           
          <children>
             
-            <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="507.0" layoutY="281.0" mnemonicParsing="false" onAction="#buttonEventBack" prefHeight="25.0" prefWidth="101.0" text="Atrás" />
+            <Button fx:id="btnInforme" cancelButton="true" focusTraversable="false" layoutX="507.0" layoutY="281.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Informe" />
             
-                        <Button fx:id="btnSignUp" defaultButton="true" disable="true" focusTraversable="false" layoutX="503.0" layoutY="69.0" mnemonicParsing="false" onAction="#buttonEvent" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Contratar" />
+                        <Button fx:id="btnContratar" defaultButton="true" disable="true" focusTraversable="false" layoutX="503.0" layoutY="69.0" mnemonicParsing="false"  prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Contratar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Button>
             <MenuBar layoutX="-4.0" layoutY="1.0" prefHeight="26.0" prefWidth="646.0" style="-fx-background-color: white;">
               <menus>
                 <Menu mnemonicParsing="false" text="Inicio">
@@ -67,25 +65,29 @@
                   </Menu>
               </menus>
             </MenuBar>
-            <TableView editable="true" layoutX="12.0" layoutY="100.0" prefHeight="206.0" prefWidth="417.0">
+            <TableView fx:id="tablaTrabajador" editable="true" layoutX="12.0" layoutY="100.0" prefHeight="206.0" prefWidth="417.0">
               <columns>
-                <TableColumn prefWidth="91.99996948242188" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Login" />
-                <TableColumn prefWidth="68.79998779296875" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Nombre" />
-                  <TableColumn prefWidth="102.4000244140625" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Apellido" />
-                  <TableColumn prefWidth="157.20001220703125" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Email" />
+                <TableColumn fx:id="colLogin" prefWidth="91.99996948242188" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Login" />
+                <TableColumn fx:id="colNombre" prefWidth="184.79998779296875" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text=" Nombre Completo" />
+                  <TableColumn fx:id="colEmail" prefWidth="139.4000244140625" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Email" />
               </columns>
             </TableView>
-            <ComboBox layoutX="35.0" layoutY="56.0" prefHeight="25.0" prefWidth="109.0">
+            <ComboBox fx:id="cBoxFiltro" layoutX="35.0" layoutY="56.0" prefHeight="25.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;">
                
             </ComboBox>
             <Label layoutX="35.0" layoutY="31.0" text="Consultar por" />
-            <ComboBox layoutX="180.0" layoutY="57.0" prefHeight="25.0" prefWidth="109.0" />
+            <ComboBox fx:id="cBoxOpcion" layoutX="180.0" layoutY="57.0" prefHeight="25.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
             <Separator layoutX="112.0" layoutY="37.0" prefHeight="4.0" prefWidth="346.0" />
             <Separator layoutX="13.0" layoutY="89.0" prefHeight="5.0" prefWidth="445.0" />
             <Separator layoutX="455.0" layoutY="38.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="7.0" />
             <Separator layoutX="11.0" layoutY="38.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="8.0" />
             <Separator layoutX="13.0" layoutY="37.0" prefHeight="5.0" prefWidth="20.0" />
-            <Button layoutX="355.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Buscar" />
+            <Button fx:id="btnBuscar" layoutX="355.0" layoutY="57.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Buscar" />
+            <Button fx:id="btnAsignar" defaultButton="true" disable="true" focusTraversable="false" layoutX="503.0" layoutY="110.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Asignar" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
          </children>
          
       </Pane>

@@ -9,6 +9,7 @@ import clases.ContratoEntity;
 import clases.ContratoId;
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
+import com.sun.javafx.scene.control.skin.DatePickerSkin;
 import factoria.ContratoManagerImplementation;
 import static factoria.TrabajadorManagerFactory.getTrabajadorManagerImplementation;
 import interfaces.ContratoInterface;
@@ -160,7 +161,7 @@ public class ContratarTrabajadorController {
         contrato.setIdContrato(idContrato);
         contrato.setGranja(cBoxGranja.getSelectionModel().getSelectedItem());
         contrato.setTrabajador(cBoxTrabajador.getSelectionModel().getSelectedItem());
-        contrato.setFechaContratacion(String.valueOf(datePickerContrato.getValue()));
+        contrato.setFechaContratacion(Date.valueOf(datePickerContrato.getValue()));
         contrato.setSalario(Long.parseLong(txtSalario.getText()));
 
         contratoManager.contratarTrabajador(contrato);

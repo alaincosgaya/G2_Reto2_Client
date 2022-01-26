@@ -30,9 +30,9 @@ public class ContratoEntity implements Serializable {
     
     private SimpleObjectProperty<GranjaEntity> granja;
    
-    //private SimpleObjectProperty<Date> fechaContratacion;
+    private SimpleObjectProperty<Date> fechaContratacion;
 
-    private SimpleStringProperty fechaContratacion;
+    //private SimpleStringProperty fechaContratacion;
     
     private SimpleLongProperty salario;
 
@@ -49,28 +49,28 @@ public class ContratoEntity implements Serializable {
         this.trabajador = new SimpleObjectProperty();
         this.granja = new SimpleObjectProperty();
        
-        //this.fechaContratacion = new SimpleObjectProperty();
-        this.fechaContratacion = new SimpleStringProperty();
+        this.fechaContratacion = new SimpleObjectProperty();
+        //this.fechaContratacion = new SimpleStringProperty();
         this.salario = new SimpleLongProperty();
     }
 
     
-     /*public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, Date fechaContratacion, Long salario) {
+     public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, Date fechaContratacion, Long salario) {
         this.idContrato = new SimpleObjectProperty(idContrato);
         this.trabajador = new SimpleObjectProperty(trabajador);
         this.granja = new SimpleObjectProperty(granja);
        
         this.fechaContratacion = new SimpleObjectProperty(fechaContratacion);
         this.salario = new SimpleLongProperty(salario);
-    }*/
-     public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, String fechaContratacion, Long salario) {
+    }
+    /* public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, String fechaContratacion, Long salario) {
         this.idContrato = new SimpleObjectProperty(idContrato);
         this.trabajador = new SimpleObjectProperty(trabajador);
         this.granja = new SimpleObjectProperty(granja);
        
         this.fechaContratacion = new SimpleStringProperty(fechaContratacion);
         this.salario = new SimpleLongProperty(salario);
-    }
+    }*/
     
 
     
@@ -99,22 +99,22 @@ public class ContratoEntity implements Serializable {
     }
     
     
-   /* public Date getFechaContratacion() {
+    public Date getFechaContratacion() {
         return this.fechaContratacion.get();
     }
 
     public void setFechaContratacion(Date fechaContratacion) {
         this.fechaContratacion.set(fechaContratacion);
-    }*/
+    }
     
     
-    public String getFechaContratacion() {
+   /* public String getFechaContratacion() {
         return this.fechaContratacion.get();
     }
 
     public void setFechaContratacion(String fechaContratacion) {
         this.fechaContratacion.set(fechaContratacion);
-    }
+    }*/
 
     @Override
     public int hashCode() {

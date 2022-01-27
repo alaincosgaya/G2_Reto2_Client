@@ -30,7 +30,8 @@
     <bottom>
         <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <children>
-                <fx:include fx:id="hBoxMenu" source="menu2.fxml" />
+                <!--
+            <fx:include fx:id="hBoxMenu" source="menu2.fxml" />-->
             </children>
             <children>
                 <Button fx:id="btnInforme" cancelButton="true" focusTraversable="false" layoutX="525.0" layoutY="279.0" mnemonicParsing="false" onAction="#generarInforme" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Informe" />
@@ -40,9 +41,10 @@
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Button>
-                <TableView fx:id="tabla" editable="true" layoutX="23.0" layoutY="100.0" prefHeight="206.0" prefWidth="467.0">
+
+                <TableView fx:id="tablaAnimal" editable="true" layoutX="23.0" layoutY="100.0" prefHeight="206.0" prefWidth="467.0" styleClass="table-view ,collumn-header-backgroud" stylesheets="@fxml.css">
                     <columns>
-                        <TableColumn fx:id="colNombre" prefWidth="75.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Nombre" />
+                        <TableColumn fx:id="colNombre" prefWidth="75.0" styleClass="collumn-header-backgroud" text="Nombre" />
                         <TableColumn fx:id="colTipo" prefWidth="72.79998779296875" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Tipo" />
                         <TableColumn fx:id="colEstado" prefWidth="71.20001220703125" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Estado" />
                         <TableColumn fx:id="colSexo" prefWidth="65.5999755859375" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Sexo" />
@@ -50,9 +52,9 @@
                         <TableColumn fx:id="colZona" minWidth="0.0" prefWidth="45.60003662109375" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Zona" />
                     </columns>
                 </TableView>
-                <ComboBox fx:id="seleccionFiltro" layoutX="35.0" layoutY="51.0" onAction="#seleccionFiltro" prefHeight="27.0" prefWidth="119.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="seleccionFiltro" layoutX="35.0" layoutY="51.0" prefHeight="27.0" prefWidth="119.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
                 <Label layoutX="35.0" layoutY="27.0" text="Consultar por" />
-                <ComboBox fx:id="seleccionDato" layoutX="196.0" layoutY="51.0" onAction="#seleccionDato" prefHeight="27.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="seleccionDato" layoutX="196.0" layoutY="51.0" prefHeight="27.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
                 <Separator layoutX="135.0" layoutY="37.0" prefHeight="4.0" prefWidth="353.0" />
                 <Separator layoutX="13.0" layoutY="90.0" prefHeight="4.0" prefWidth="478.0" />
                 <Separator layoutX="486.0" layoutY="38.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="7.0" />

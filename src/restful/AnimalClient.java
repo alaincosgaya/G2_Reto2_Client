@@ -5,9 +5,12 @@
  */
 package restful;
 
+import clases.Zona;
+import java.util.Date;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:AnimalEntityFacadeREST
@@ -39,35 +42,66 @@ public class AnimalClient {
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
 
-    public <T> T animalesPorEstado(Class<T> responseType, String estado) throws ClientErrorException {
+    public <T> T animalesPorEstado(GenericType<T> responseType, String estado) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("estadoAnimal/{0}", new Object[]{estado}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void edit(Object requestEntity, String id) throws ClientErrorException {
+    public void edit(Object requestEntity, Long id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T cambiarEstadoAnimal(Class<T> responseType, String idAnimal, String estado) throws ClientErrorException {
+//metodos que permiten la modificacion de los diferentes atributos del animal
+    public <T> T cambiarEstadoAnimal(GenericType<T> responseType, Long idAnimal, String estado) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("cambiarEstadoAnimal/{0}/{1}", new Object[]{idAnimal, estado}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T find(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T cambiarSexoAnimal(GenericType<T> responseType, Long idAnimal, String sexo) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("cambiarSexoAnimal/{0}/{1}", new Object[]{idAnimal, sexo}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T cambiarTipoAnimal(GenericType<T> responseType, Long idAnimal, String tipo) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("cambiarTipoAnimal/{0}/{1}", new Object[]{idAnimal, tipo}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T cambiarNombreAnimal(GenericType<T> responseType, Long idAnimal, String nombreAnimal) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("cambiarNombreAnimal/{0}/{1}", new Object[]{idAnimal, nombreAnimal}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T cambiarFechaAnimal(GenericType<T> responseType, Long idAnimal, String fecha) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("cambiarFechaAnimal/{0}/{1}", new Object[]{idAnimal, fecha}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T cambiarZonaAnimal(GenericType<T> responseType, Long idAnimal, Zona zona) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("cambiarZonaAnimal/{0}/{1}", new Object[]{idAnimal, zona}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T find(GenericType<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findRange(Class<T> responseType, String from, String to) throws ClientErrorException {
+    public <T> T findRange(GenericType<T> responseType, String from, String to) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T animalesPorSexo(Class<T> responseType, String sexo) throws ClientErrorException {
+    public <T> T animalesPorSexo(GenericType<T> responseType, String sexo) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("animalSexo/{0}", new Object[]{sexo}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -77,22 +111,22 @@ public class AnimalClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T animalesPorTipo(Class<T> responseType, String tipo) throws ClientErrorException {
+    public <T> T animalesPorTipo(GenericType<T> responseType, String tipo) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("TipoAnimal/{0}", new Object[]{tipo}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findAll(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void remove(String id) throws ClientErrorException {
+    public void remove(Long id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T animalesPorNombre(Class<T> responseType, String nombreAnimal) throws ClientErrorException {
+    public <T> T animalesPorNombre(GenericType<T> responseType, String nombreAnimal) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("nombreAnimal/{0}", new Object[]{nombreAnimal}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -101,5 +135,5 @@ public class AnimalClient {
     public void close() {
         client.close();
     }
-    
+
 }

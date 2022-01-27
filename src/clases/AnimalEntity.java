@@ -3,50 +3,29 @@ package clases;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * JavaBean de 
+ * JavaBean de
+ *
  * @author Jonathan Camacho
  */
-
+@XmlRootElement()
 public class AnimalEntity implements Serializable {
 
-    private Long idAnimal;
+    private static final long serialVersionUID = 1L;
+
+   /* private Long idAnimal;
     private String nombreAnimal;
     private TipoAnimal tipo;
     private EstadoAnimal estado;
     private Date fechaNacimiento;
     private SexoAnimal sexo;
-    private int zona;
+    private Zona zona;
 
-    //constructor publico vacio
-    public AnimalEntity() {
-    }
-
-    //constructor con parametros
-    public AnimalEntity(Long idAnimal, String nombreAnimal, TipoAnimal tipo, EstadoAnimal estado, Date fechaNacimiento, SexoAnimal sexo, int zona) {
-        this.idAnimal = idAnimal;
-        this.nombreAnimal = nombreAnimal;
-        this.tipo = tipo;
-        this.estado = estado;
-        this.fechaNacimiento = fechaNacimiento;
-        this.sexo = sexo;
-        this.zona = zona;
-    }
-
-    //getters and setters
     public Long getIdAnimal() {
         return idAnimal;
     }
@@ -95,14 +74,102 @@ public class AnimalEntity implements Serializable {
         this.sexo = sexo;
     }
 
-    public int getZona() {
+    public Zona getZona() {
         return zona;
     }
 
-    public void setZona(int zona) {
+    public void setZona(Zona zona) {
         this.zona = zona;
+    }*/
+
+    
+    private SimpleLongProperty idAnimal;
+    private SimpleStringProperty nombreAnimal;
+    private SimpleObjectProperty<TipoAnimal> tipo;
+    private SimpleObjectProperty<EstadoAnimal> estado;
+    private SimpleObjectProperty<Date> fechaNacimiento;
+    private SimpleObjectProperty<SexoAnimal> sexo;
+    private SimpleObjectProperty<Zona> zona;
+
+    //constructor publico vacio
+    public AnimalEntity() {
+        this.idAnimal = new SimpleLongProperty();
+        this.nombreAnimal = new SimpleStringProperty();
+        this.tipo = new SimpleObjectProperty();
+        this.estado = new SimpleObjectProperty();
+        this.fechaNacimiento = new SimpleObjectProperty();
+        this.sexo = new SimpleObjectProperty();
+        this.zona = new SimpleObjectProperty();
     }
 
+    //constructor con parametros
+    public AnimalEntity(Long idAnimal, String nombreAnimal, TipoAnimal tipo, EstadoAnimal estado, Date fechaNacimiento, SexoAnimal sexo, Zona zona) {
+        this.idAnimal = new SimpleLongProperty(idAnimal);
+        this.nombreAnimal = new SimpleStringProperty(nombreAnimal);
+        this.tipo = new SimpleObjectProperty(tipo);
+        this.estado = new SimpleObjectProperty(estado);
+        this.fechaNacimiento = new SimpleObjectProperty(fechaNacimiento);
+        this.sexo = new SimpleObjectProperty(sexo);
+        this.zona = new SimpleObjectProperty(zona);
+    }
+
+    //getters and setters
+    public Long getIdAnimal() {
+        return this.idAnimal.get();
+    }
+
+    public void setIdAnimal(Long idAnimal) {
+        this.idAnimal.set(idAnimal);
+    }
+
+    public String getNombreAnimal() {
+        return this.nombreAnimal.get();
+    }
+
+    public void setNombreAnimal(String nombreAnimal) {
+        this.nombreAnimal.set(nombreAnimal);
+    }
+
+    public TipoAnimal getTipo() {
+        return this.tipo.get();
+    }
+
+    public void setTipo(TipoAnimal tipo) {
+        this.tipo.set(tipo);
+    }
+
+    public EstadoAnimal getEstado() {
+        return this.estado.get();
+    }
+
+    public void setEstado(EstadoAnimal estado) {
+        this.estado.set(estado);
+    }
+
+    public Date getFechaNacimiento() {
+        return this.fechaNacimiento.get();
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento.set(fechaNacimiento);
+    }
+
+    public SexoAnimal getSexo() {
+        return this.sexo.get();
+    }
+
+    public void setSexo(SexoAnimal sexo) {
+        this.sexo.set(sexo);
+    }
+
+    public Zona getZona() {
+        return this.zona.get();
+    }
+
+    public void setZona(Zona zona) {
+        this.zona.set(zona);
+    }
+     
     //metodos
     @Override
     public int hashCode() {

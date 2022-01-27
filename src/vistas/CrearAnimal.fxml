@@ -4,13 +4,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -35,22 +30,24 @@
     <bottom>
         <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
             <children>
+                <!--
                 <fx:include fx:id="hBoxMenu" source="menu2.fxml"/>
+                -->
             </children>
             <children>
-                <Label layoutX="52.0" layoutY="34.0" styleClass="header" stylesheets="@../../G2_Reto2_Client/LauserriCliente/src/vistas/fxml.css" text="Añadir animal" />
+                <Label layoutX="52.0" layoutY="34.0" styleClass="header" text="Añadir animal" />
             
-                <Label layoutX="149.0" layoutY="127.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Tipo" />
+                <Label layoutX="149.0" layoutY="127.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" text="Tipo" />
             
-                <Label layoutX="149.0" layoutY="199.0" prefHeight="27.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Sexo" />
+                <Label layoutX="149.0" layoutY="199.0" prefHeight="27.0" prefWidth="68.0" styleClass="txt" text="Sexo" />
             
                 <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="152.0" layoutY="268.0" mnemonicParsing="false" onAction="#volver" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Atrás" />
             
                 <Separator layoutX="51.0" layoutY="78.0" prefHeight="1.0" prefWidth="495.0" />
             
-                <Label layoutX="149.0" layoutY="163.0" prefHeight="27.0" prefWidth="111.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Fecha nacimiento" />
+                <Label layoutX="149.0" layoutY="163.0" prefHeight="27.0" prefWidth="111.0" styleClass="txt" text="Fecha nacimiento" />
             
-                <Label layoutX="149.0" layoutY="93.0" prefHeight="27.0" prefWidth="110.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Nombre" />
+                <Label layoutX="149.0" layoutY="93.0" prefHeight="27.0" prefWidth="110.0" styleClass="txt" text="Nombre" />
             
                 <TextField fx:id="txtName" layoutX="305.0" layoutY="94.0" onKeyTyped="#eventKey" prefHeight="25.0" prefWidth="153.0" promptText="Nombre del animal" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
             
@@ -61,11 +58,11 @@
                 </Button>
             
                 <Label layoutX="149.0" layoutY="233.0" prefHeight="25.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Zona" />
-                <ComboBox fx:id="comboSeleccionarTipo" layoutX="306.0" layoutY="128.0" onAction="#seleccionarTipo" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-                <ComboBox fx:id="comboSeleccionarSexo" layoutX="306.0" layoutY="200.0" onAction="#seleccionarSexo" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-                <ComboBox fx:id="comboSeleccionarZona" layoutX="306.0" layoutY="233.0" onAction="#seleccionarZona" prefWidth="150.0" promptText="No es obligatorio" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="comboSeleccionarTipo" layoutX="306.0" layoutY="128.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="comboSeleccionarSexo" layoutX="306.0" layoutY="200.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="comboSeleccionarZona" layoutX="306.0" layoutY="233.0" prefWidth="150.0" promptText="No es obligatorio" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
                 
-                <DatePicker fx:id="dateFechaNacimiento" layoutX="305.0" layoutY="164.0" onAction="#validarDatos" prefHeight="25.0" prefWidth="152.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <DatePicker fx:id="dateFechaNacimiento" layoutX="305.0" layoutY="164.0" prefHeight="25.0" prefWidth="152.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
             </children>
          
         </Pane>

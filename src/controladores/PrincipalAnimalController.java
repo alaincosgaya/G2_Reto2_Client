@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controladores;
 
 import clases.AnimalEntity;
@@ -63,17 +58,25 @@ public class PrincipalAnimalController {
     private static final Logger LOGGER = Logger.getLogger(PrincipalAnimalController.class.getName());
 
     private Stage stage;
-
+    //interfaces que se utilizaran en el controlador
     private InterfazAnimal animalManager;
     private InterfazZona zonaManager;
 
+    private ObservableList<AnimalEntity> animales;
+    private ObservableList estados;
+    private ObservableList sexo;
+    private ObservableList tipo;
+
+    private boolean agregarAnimal;
+    //Clase animalEntity
+    private AnimalEntity animalEntity;
+    //Elementos de la ventana PrincipalAnimal FXML
     @FXML
     private BorderPane panePrincipalAnimal;
     @FXML
     private Button btnInforme;
     @FXML
     private Button btnCrearAnimal;
-    ////////////////////////
     @FXML
     private TableView tablaAnimal;
     @FXML
@@ -88,7 +91,6 @@ public class PrincipalAnimalController {
     private TableColumn colFechaNacimiento;
     @FXML
     private TableColumn<AnimalEntity, String> colZona;
-    ///////////////////
     @FXML
     private ComboBox<String> seleccionFiltro;
     @FXML
@@ -99,16 +101,6 @@ public class PrincipalAnimalController {
     private Button btnEliminar;
     @FXML
     private Button btnInsertar;
-
-    private ObservableList<AnimalEntity> animales;
-
-    private ObservableList estados;
-    private ObservableList sexo;
-    private ObservableList tipo;
-
-    private boolean agregarAnimal;
-
-    private AnimalEntity animalEntity;
 
     /**
      * Metodo que indica el stage.
@@ -138,9 +130,10 @@ public class PrincipalAnimalController {
         stage.setTitle("PrincipalAnimal");
         stage.setScene(scene);
         agregarAnimal = false;
+        //implemenmtacion de AnimalImplementation
         animalManager = new AnimalImplementacion();
         //btnBuscar.setDisable(true);
-        //inicializamos la Tabla Animal
+        //inicializamos la Tabla Animal con sus columnas
         tablaAnimal.setEditable(true);
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreAnimal"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
@@ -148,7 +141,7 @@ public class PrincipalAnimalController {
         colSexo.setCellValueFactory(new PropertyValueFactory<>("sexo"));
         colFechaNacimiento.setCellValueFactory(new PropertyValueFactory<>("fechaNacimiento"));
         colZona.setCellValueFactory(new PropertyValueFactory<>("zona"));
-        //columnas editables
+        //columnas editables de la tabla
         estados = FXCollections.observableArrayList(EstadoAnimal.values());
         colEstado.setCellFactory(ComboBoxTableCell.forTableColumn(estados));
         sexo = FXCollections.observableArrayList(SexoAnimal.values());
@@ -156,7 +149,6 @@ public class PrincipalAnimalController {
         tipo = FXCollections.observableArrayList(TipoAnimal.values());
         colTipo.setCellFactory(ComboBoxTableCell.forTableColumn(tipo));
         colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
-
         colFechaNacimiento.setCellFactory(new Callback<TableColumn, TableCell>() {
             @Override
             public TableCell call(TableColumn p) {
@@ -164,16 +156,14 @@ public class PrincipalAnimalController {
                 return dateEdit;
             }
         });
-
-//        colFechaNacimiento.setCellFactory(TextFieldTableCell.forTableColumn());
+        //metodo encargado del editado de la columna zona
         cargarZonasColumn();
-
         //lista de filtros inicializada
         seleccionFiltro();
         //llamada al metodo que selecciona el tipo de datos a cargar en la comboBox
         //en funcion al filtro seleccionado
         seleccionFiltro.getSelectionModel().selectedItemProperty().addListener(this::seleccionDato);
-        //commit que guardara los cambios reslizados en la columna
+        //commit que guardara los cambios reslizados en las columnas
         colEstado.setOnEditCommit(this::modificarEstado);
         colSexo.setOnEditCommit(this::modificarSexo);
         colTipo.setOnEditCommit(this::modificarTipo);
@@ -185,7 +175,7 @@ public class PrincipalAnimalController {
         btnBuscar.setOnAction(this::buscarAnimal);
         btnCrearAnimal.setOnAction(this::aniadirAnimal);
         btnEliminar.setOnAction(this::eliminarAnimal);
-        // Control de seleccion de fila, en caso de seleccionar una se controla que
+        //Control de seleccion de fila, en caso de seleccionar una se controla que
         //el boton este habilitado
         tablaAnimal.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -197,6 +187,7 @@ public class PrincipalAnimalController {
         //Se inicia la ventana con los datos cargados en la tabla
         animales = FXCollections.observableArrayList(animalManager.getAllAnimales());
         tablaAnimal.setItems(animales);
+        //se muestra el stage
         stage.show();
     }
 
@@ -238,12 +229,25 @@ public class PrincipalAnimalController {
         }
     }
 
+    /**
+     * Metodo el cual se encarga de cargar la comboBox seleccionFiltro con los
+     * diferentes tipos de filtro disponibles.
+     */
     @FXML
     public void seleccionFiltro() {
         ObservableList<String> filtro = FXCollections.observableArrayList("Tipo", "Estado", "Sexo", "Todos");
         seleccionFiltro.setItems(filtro);
     }
 
+    /**
+     * metodo el cual se encarga de cargar los datos de la comboBox
+     * seleccionDato en funcion del tipo de filtro que se ha escogido
+     * previamente.
+     *
+     * @param ov
+     * @param oldValue
+     * @param newValue
+     */
     @FXML
     private void seleccionDato(ObservableValue ov, String oldValue, String newValue) {
         if (newValue != null) {
@@ -267,6 +271,13 @@ public class PrincipalAnimalController {
         }
     }
 
+    /**
+     * Metodo el cual se encarga de buscar a los animales en funcion de los
+     * filtros seleccionados en las comboBox seleccionarFiltro y
+     * seleccionarDato.
+     *
+     * @param event
+     */
     @FXML
     private void buscarAnimal(ActionEvent event) {
         String filtro = (String) seleccionFiltro.getValue();
@@ -295,6 +306,12 @@ public class PrincipalAnimalController {
 
     }
 
+    /**
+     * Metodo el cual se encarga de cargar en la tabla los datos de los animales
+     * previamente buscados.
+     *
+     * @param animalesList
+     */
     public void cargarDatos(Collection<AnimalEntity> animalesList) {
 
         animales = FXCollections.observableArrayList(animalesList);
@@ -302,6 +319,12 @@ public class PrincipalAnimalController {
     }
 
     //metodos disponibles para el modificado de los atributos de la tabla animal
+    /**
+     * Metodo el cual se encarga de modificar el estado de un animal. Al hacer
+     * click en la celda se abrira una comboBox con los valores disponibles
+     *
+     * @param event
+     */
     @FXML
     public void modificarEstado(Event event) {
 
@@ -314,6 +337,12 @@ public class PrincipalAnimalController {
 
     }
 
+    /**
+     * Metodo el cual se encarga de modificar el sexo de un animal. Al hacer
+     * click en la celda se abrira una comboBox con los valores disponibles
+     *
+     * @param event
+     */
     @FXML
     private void modificarSexo(Event event) {
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
@@ -324,6 +353,12 @@ public class PrincipalAnimalController {
         alert.show();
     }
 
+    /**
+     * Metodo el cual se encarga de modificar el tipo de un animal. Al hacer
+     * click en la celda se abrira una comboBox con los valores disponibles
+     *
+     * @param event
+     */
     @FXML
     private void modificarTipo(Event event) {
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
@@ -334,6 +369,13 @@ public class PrincipalAnimalController {
         alert.show();
     }
 
+    /**
+     * Metodo el cual se encarga de modificar el nombre de un animal. Al hacer
+     * click en la celda habilitara la edicion en la celda. Para confirmar la
+     * edicion, sera necesario pulsar la tecla enter.
+     *
+     * @param event
+     */
     @FXML
     private void modificarNombre(Event event) {
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
@@ -344,6 +386,13 @@ public class PrincipalAnimalController {
         alert.show();
     }
 
+    /**
+     * Metodo el cual se encarga de modificar la fecha de nacimiento de un
+     * animal. Al hacer click en la celda, se permitira la seleccion de la fecha
+     * deseada.
+     *
+     * @param event
+     */
     @FXML
     private void modificarFecha(Event event) {
         //animalEntity = new AnimalEntity();
@@ -359,6 +408,12 @@ public class PrincipalAnimalController {
         alert.show();
     }
 
+    /**
+     * Metodo el cual se encarga de modificar la zona de un animal. Al hacer
+     * click en la celda habilitara una comboBox con las zonas disponibles.
+     *
+     * @param event
+     */
     @FXML
     private void modificarZona(Event event) {
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
@@ -370,7 +425,15 @@ public class PrincipalAnimalController {
         alert.show();
     }
 
-    //metodo el cual se encarga de eliminar una fila de la tabla animal
+    /**
+     * Metodo el cual se encarga de eliminar una fila de la tabla animal. Al
+     * pulsar el boton para eliminar la fila, se pedira confirmacion. En caso de
+     * que el usuario confirmar dicha eliminacion, la fila desaparecera de la
+     * base de datos, refrescara la tabla y el boton eliminar se deshabilitara
+     * hasta que se seleccione otra fila.
+     *
+     * @param event
+     */
     @FXML
     private void eliminarAnimal(ActionEvent event) {
         AnimalEntity animal = (AnimalEntity) tablaAnimal.getSelectionModel().getSelectedItem();
@@ -403,6 +466,10 @@ public class PrincipalAnimalController {
         }
     }
 
+    /**
+     * Metodo el cual se encarga de cargar las zonas en la celda seleccionada de
+     * la columna Zonas de la tabla animales.
+     */
     private void cargarZonasColumn() {
         zonaManager = new ZonaImplementacion();
         ObservableList zonas = FXCollections.observableArrayList(zonaManager.getAllZonas());

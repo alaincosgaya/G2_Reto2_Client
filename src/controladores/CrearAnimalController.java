@@ -48,7 +48,9 @@ import restful.AnimalClient;
 import restful.ZonaClient;
 
 /**
- * FXML Controller class
+ * Clase FXML del controlador de la ventana PrincipalAnimal, la cual se
+ * encargara de realizar todas las acciones pertinentes redactadas en la
+ * documentacion
  *
  * @author Jonathan Camacho
  */
@@ -90,7 +92,12 @@ public class CrearAnimalController {
 
     /**
      * Metodo con el cual se inicializa la ventana. La ventana iniciara con las
-     * combos y el text del nombre vacio. Se tendra que seleccionar
+     * combos y el text del nombre vacio. Se tendran que rellenar
+     * obligatoriamente los campos de nombre, tipo, sexo y fecha de nacimiento.
+     * Esta ultima empezara iniciada con el dia actual en el que nos encontremos
+     * a la hora de hacer la creacion del animal.
+     *
+     * No sera necesario agregar una zona al animal para su creacion,
      *
      * @param root
      */
@@ -114,7 +121,8 @@ public class CrearAnimalController {
     }
 
     /**
-     * Initializes the controller class.
+     * Metodo que permite volver a la pantalla PrincipalAnimal cuando se pulsa
+     * el boton de atras
      */
     @FXML
     private void volver(ActionEvent event) {
@@ -141,6 +149,16 @@ public class CrearAnimalController {
     private void eventKey(KeyEvent event) {
     }
 
+    /**
+     * Metodo con el cual, al rellenar los campos necesarios y pulsar el boton
+     * añadir animal, se ejecutara creando asi el animal. En caso de que se
+     * realice con exito se mostrara al usuario un alert de informacion
+     * indicando que se ha creado bien.
+     *
+     * Ademas se limpiaran los campos tras su creacion.
+     *
+     * @param event
+     */
     @FXML
     private void crearAnimal(ActionEvent event) {
         AnimalEntity animal = new AnimalEntity();
@@ -164,6 +182,10 @@ public class CrearAnimalController {
         comboSeleccionarZona.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Metodo el cual permite el cargado de datos de la enumeracion TipoAnimal
+     * en la comboBox comboSeleccionarTipo
+     */
     @FXML
     private void seleccionarTipo() {
         ObservableList<TipoAnimal> listaTipo = FXCollections.observableArrayList(TipoAnimal.values());

@@ -9,12 +9,12 @@ import clases.AnimalEntity;
 import clases.EstadoAnimal;
 import clases.SexoAnimal;
 import clases.TipoAnimal;
-import clases.Zona;
+import clases.ZonaEntity;
 import controladores.*;
 import factoria.AnimalImplementacion;
-import factoria.ZonaImplementacion;
+import factoria.ZonaManagerImplementation;
 import interfaces.InterfazAnimal;
-import interfaces.InterfazZona;
+import interfaces.ZonaInterface;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
@@ -69,14 +69,14 @@ public class CrearAnimalController {
     @FXML
     private ComboBox<SexoAnimal> comboSeleccionarSexo;
     @FXML
-    private ComboBox<Zona> comboSeleccionarZona;
+    private ComboBox<ZonaEntity> comboSeleccionarZona;
     @FXML
     private DatePicker dateFechaNacimiento;
 
     private Stage stage;
     //private InterfazAnimal animalManager;
     InterfazAnimal animalManager = new AnimalImplementacion();
-    InterfazZona zonaManager = new ZonaImplementacion();
+    ZonaInterface zonaManager = new ZonaManagerImplementation();
     //ZonaClient webClienteZona = new ZonaClient();
 
     /**
@@ -88,6 +88,12 @@ public class CrearAnimalController {
         stage = stage1;
     }
 
+    /**
+     * Metodo con el cual se inicializa la ventana. La ventana iniciara con las
+     * combos y el text del nombre vacio. Se tendra que seleccionar
+     *
+     * @param root
+     */
     public void initStage(Parent root) {
         Stage anotherStage = new Stage();
         anotherStage.setResizable(false);
@@ -97,28 +103,18 @@ public class CrearAnimalController {
         //inicializamos las combos con los datos pertinentes
         seleccionarTipo();
         seleccionarSexo();
-        // comboSeleccionarZona.setItems(FXCollections.observableArrayList(webClienteZona.find_XML(new GenericType<List<Zona>>() {
-
-        // }, "1")));
         seleccionarZona();
         //indicamos la fecha de hoy por defecto
         dateFechaNacimiento.setValue(LocalDate.now());
-        //     comboSeleccionarZona.getSelectionModel().selectedItemProperty().addListener(this::filtradoZonas);
-
+        //validamos que el boton de añadir animal se habilite cuando todos los campos
+        //necesarios esten rellenados
         validarDatos();
+        //mostramos la ventana
         anotherStage.show();
     }
 
     /**
      * Initializes the controller class.
-     */
-    /*
-
-     
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }
      */
     @FXML
     private void volver(ActionEvent event) {
@@ -182,7 +178,7 @@ public class CrearAnimalController {
 
     @FXML
     private void seleccionarZona() {
-        ObservableList<Zona> listaZona = FXCollections.observableArrayList(zonaManager.getAllZonas());
+        ObservableList<ZonaEntity> listaZona = FXCollections.observableArrayList(zonaManager.getAllZonas());
         comboSeleccionarZona.setItems(listaZona);
     }
 
@@ -195,19 +191,4 @@ public class CrearAnimalController {
                                         txtName.textProperty().isEmpty())))
         );
     }
-
-    /*
-        public void filtradoZonas(ObservableValue ov, Object oldValue, Object newValue) {
-        comboSeleccionarZona.getSelectionModel().clearSelection();
-        if (newValue != null) {
-
-            AnimalClient webCliente = new AnimalClient();
-            String idAnimal = String.valueOf(((AnimalEntity) newValue).getIdAnimal());
-            comboSeleccionarZona.getItems().clear();
-            comboSeleccionarZona.setItems(FXCollections.observableArrayList(webCliente.zonasDisponibles(new GenericType<List<ZonaEntity>>() {
-            }, idAnimal)));
-
-        }
-    }
-     */
 }

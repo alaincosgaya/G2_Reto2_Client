@@ -7,9 +7,9 @@ import clases.SexoAnimal;
 import clases.TipoAnimal;
 import clases.Zona;
 import factoria.AnimalImplementacion;
-import factoria.ZonaImplementacion;
+import factoria.ZonaManagerImplementation;
 import interfaces.InterfazAnimal;
-import interfaces.InterfazZona;
+import interfaces.ZonaInterface;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -60,7 +60,7 @@ public class PrincipalAnimalController {
     private Stage stage;
     //interfaces que se utilizaran en el controlador
     private InterfazAnimal animalManager;
-    private InterfazZona zonaManager;
+    private ZonaInterface zonaManager;
 
     private ObservableList<AnimalEntity> animales;
     private ObservableList estados;
@@ -417,7 +417,7 @@ public class PrincipalAnimalController {
     @FXML
     private void modificarZona(Event event) {
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        Zona zona = (Zona) ((TableColumn.CellEditEvent) event).getNewValue();
+        ZonaEntity zona = (ZonaEntity) ((TableColumn.CellEditEvent) event).getNewValue();
         //  animalManager.cambiarZonaAnimal(animal.getIdAnimal(), zona);
         animal.setZona(zona);
         animalManager.editarAnimal(animal);
@@ -471,7 +471,7 @@ public class PrincipalAnimalController {
      * la columna Zonas de la tabla animales.
      */
     private void cargarZonasColumn() {
-        zonaManager = new ZonaImplementacion();
+        zonaManager = new ZonaManagerImplementation();
         ObservableList zonas = FXCollections.observableArrayList(zonaManager.getAllZonas());
         colZona.setCellFactory(ComboBoxTableCell.forTableColumn(zonas));
     }

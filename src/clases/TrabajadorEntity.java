@@ -25,7 +25,7 @@ public class TrabajadorEntity extends UserEntity implements Serializable {
     private List<ContratoEntity> contratos; 
     
  
-    private List<Zona> zonas;
+    private List<ZonaEntity> zonas;
 
 
     public List<ContratoEntity> getContratos() {
@@ -37,11 +37,11 @@ public class TrabajadorEntity extends UserEntity implements Serializable {
     }
 
     @XmlTransient
-    public List<Zona> getZonas() {
+    public List<ZonaEntity> getZonas() {
         return zonas;
     }
 
-    public void setZonas(List<Zona> zonas) {
+    public void setZonas(List<ZonaEntity> zonas) {
         this.zonas = zonas;
     }
 

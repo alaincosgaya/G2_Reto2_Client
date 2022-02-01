@@ -6,9 +6,13 @@
 package factoria;
 
 import clases.ContratoEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import interfaces.ContratoInterface;
+import java.net.ConnectException;
 import java.util.Collection;
 import java.util.List;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
 import restful.ContratoClient;
 
@@ -25,62 +29,110 @@ public class ContratoManagerImplementation implements ContratoInterface {
     }
 
     @Override
-    public Collection<ContratoEntity> getAllContratos() {
+    public Collection<ContratoEntity> getAllContratos() throws ClienteServidorConexionException, BDServidorException {
         List<ContratoEntity> contratos = null;
-        contratos = webClient.findAll(new GenericType<List<ContratoEntity>>() {
-        });
+        try {
+            contratos = webClient.findAll(new GenericType<List<ContratoEntity>>() {
+            });
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contratos;
     }
 
     @Override
-    public Collection<ContratoEntity> getContratosGranjero(String idGranjero) {
+    public Collection<ContratoEntity> getContratosGranjero(String idGranjero) throws ClienteServidorConexionException, BDServidorException {
         List<ContratoEntity> contratos = null;
-        contratos = webClient.contratosGranjero(new GenericType<List<ContratoEntity>>() {
-        }, idGranjero);
+        try {
+            contratos = webClient.contratosGranjero(new GenericType<List<ContratoEntity>>() {
+            }, idGranjero);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contratos;
     }
 
     @Override
-    public ContratoEntity getContrato(String idContrato) {
+    public ContratoEntity getContrato(String idContrato) throws ClienteServidorConexionException, BDServidorException {
         ContratoEntity contrato = null;
-        contrato = webClient.find(new GenericType<ContratoEntity>() {
-        }, idContrato);
+        try {
+            contrato = webClient.find(new GenericType<ContratoEntity>() {
+            }, idContrato);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contrato;
     }
 
     @Override
-    public Collection<ContratoEntity> getContratosTrabajador(String idTrabajador) {
+    public Collection<ContratoEntity> getContratosTrabajador(String idTrabajador) throws ClienteServidorConexionException, BDServidorException {
         List<ContratoEntity> contratos = null;
-        contratos = webClient.contratosTrabajador(new GenericType<List<ContratoEntity>>() {
-        }, idTrabajador);
+        try {
+            contratos = webClient.contratosTrabajador(new GenericType<List<ContratoEntity>>() {
+            }, idTrabajador);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contratos;
     }
 
     @Override
-    public Collection<ContratoEntity> getContratosGranja(String idGranja) {
+    public Collection<ContratoEntity> getContratosGranja(String idGranja) throws ClienteServidorConexionException, BDServidorException {
         List<ContratoEntity> contratos = null;
-        contratos = webClient.contratosGranja(new GenericType<List<ContratoEntity>>() {
-        }, idGranja);
+        try {
+            contratos = webClient.contratosGranja(new GenericType<List<ContratoEntity>>() {
+            }, idGranja);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contratos;
     }
 
     @Override
-    public void despedirTrabajador(String idTrabajador, String idGranja) {
-        webClient.despedirTrabajador(idTrabajador, idGranja);
+    public void despedirTrabajador(String idTrabajador, String idGranja) throws ClienteServidorConexionException, BDServidorException {
+        try {
+            webClient.despedirTrabajador(idTrabajador, idGranja);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
     }
 
     @Override
-    public ContratoEntity cambiarSueldo(String idTrabajador, String idGranja, String salario) {
+    public ContratoEntity cambiarSueldo(String idTrabajador, String idGranja, String salario) throws ClienteServidorConexionException, BDServidorException {
         ContratoEntity contrato = null;
-        contrato = webClient.cambiarSueldo(new GenericType<ContratoEntity>() {
-        }, idTrabajador, idGranja, salario);
+        try {
+            contrato = webClient.cambiarSueldo(new GenericType<ContratoEntity>() {
+            }, idTrabajador, idGranja, salario);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
         return contrato;
     }
 
     @Override
-    public void contratarTrabajador(ContratoEntity contrato) {
-        webClient.create_XML(contrato);
+    public void contratarTrabajador(ContratoEntity contrato) throws ClienteServidorConexionException, BDServidorException {
+        try {
+            webClient.create_XML(contrato);
+        } catch (ClientErrorException ex) {
+            throw new BDServidorException("Error ejecutando el servidor");
+        } catch (Exception ex) {
+            throw new ClienteServidorConexionException("Error a la hora de conectarse al servidor");
+        }
 
     }
-    
+
 }

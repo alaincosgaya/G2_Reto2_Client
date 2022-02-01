@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b3b21fa9-a81d-465f-bfe5-cd142b40f56a">
+    <property name="ireport.zoom" value="1.771561000000001"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+    <field name="granja" class="clases.GranjaEntity"/>
+    <field name="trabajador" class="clases.TrabajadorEntity"/>
+    <field name="fechaContratacion" class="java.util.Date"/>
+    <field name="salario" class="java.lang.Long"/>
+    <background>
+        <band splitType="Stretch"/>
+    </background>
+    <title>
+        <band height="79" splitType="Stretch">
+            <staticText>
+                <reportElement x="219" y="26" width="100" height="20" uuid="094bdfbc-5f52-43fb-8eb3-7c65a23e5a17"/>
+                <text><![CDATA[Contratos]]></text>
+            </staticText>
+        </band>
+    </title>
+    <pageHeader>
+        <band height="35" splitType="Stretch"/>
+    </pageHeader>
+    <columnHeader>
+        <band height="61" splitType="Stretch">
+            <staticText>
+                <reportElement x="35" y="25" width="100" height="20" uuid="f1f00bf3-2435-48d6-8caa-f3fe120cdc3b"/>
+                <text><![CDATA[Granja]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="154" y="25" width="100" height="20" uuid="49a3f360-1602-4b7c-a414-0f037c82b63b"/>
+                <text><![CDATA[Trabajador]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="275" y="25" width="118" height="20" uuid="3d816386-f870-4f94-85cf-dd4c4b0d7c4d"/>
+                <text><![CDATA[Fecha de contratacion]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="424" y="25" width="118" height="20" uuid="2c10ced9-276e-4068-88aa-7d32b9ec80c1"/>
+                <text><![CDATA[Salario]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    <detail>
+        <band height="125" splitType="Stretch">
+            <textField>
+                <reportElement x="35" y="0" width="100" height="20" uuid="1ba7bb7f-2644-4355-a7d9-16f467d87362"/>
+                <textFieldExpression><![CDATA[$F{granja}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="154" y="0" width="100" height="20" uuid="da6b999e-d157-4703-9269-c7621c9e61ff"/>
+                <textFieldExpression><![CDATA[$F{trabajador}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="275" y="0" width="118" height="20" uuid="7e2f15f5-8355-4343-94e4-641fcc769bd1"/>
+                <textFieldExpression><![CDATA[$F{fechaContratacion}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="424" y="0" width="100" height="20" uuid="38de029c-ec37-4479-a657-652a109e2dbe"/>
+                <textFieldExpression><![CDATA[$F{salario}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="45" splitType="Stretch"/>
+    </columnFooter>
+    <pageFooter>
+        <band height="54" splitType="Stretch"/>
+    </pageFooter>
+    <summary>
+        <band height="42" splitType="Stretch"/>
+    </summary>
+</jasperReport>

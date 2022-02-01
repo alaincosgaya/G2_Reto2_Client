@@ -1,12 +1,19 @@
 package controladores;
 
-import clases.ContratoEntity;
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
-import clases.Zona;
+import clases.ZonaEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
+import factoria.GranjaManagerImplementation;
 import static factoria.TrabajadorManagerFactory.getTrabajadorManagerImplementation;
+import static factoria.ZonaManagerFactory.getZonaManagerImplementation;
+import factoria.ZonaManagerImplementation;
+import interfaces.GranjaInterface;
 import interfaces.TrabajadorInterface;
+import interfaces.ZonaInterface;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -28,16 +35,15 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javax.ws.rs.core.GenericType;
 import restful.GranjaClient;
 
 /**
- * El controlador de la ventana de SignIn la cual controla las excepciones y las
- * acciones de los botones y los textos.
+ * El controlador de la ventana de Trabajadores la cual controla las excepciones
+ * y las acciones de los botones y los textos.
  *
- * @author Idoia Ormaetxea y Alain Cosgaya
+ * @author Alain Cosgaya
  */
 public class TrabajadoresController {
 
@@ -46,8 +52,9 @@ public class TrabajadoresController {
     private Stage stage;
 
     private TrabajadorInterface trabajadorManager;
+    private ZonaInterface zonaManager;
+    private GranjaInterface granjaManager;
 
-    
     @FXML
     private TableColumn colLogin;
     @FXML
@@ -73,9 +80,13 @@ public class TrabajadoresController {
 
     private ObservableList<TrabajadorEntity> ObservableTrabajadores;
 
-    private Collection trabajadoresAsignar;
-    
+    private Collection<TrabajadorEntity> trabajadoresAsignar;
+
+    private boolean zonaCreada;
+
     private ObservableList opciones;
+
+    private ZonaEntity zonaSeleccionada;
 
     /**
      * El metodo que indica el stage.
@@ -99,9 +110,12 @@ public class TrabajadoresController {
         stage.setTitle("Contratos");
         stage.setScene(scene);
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
-       
+
         // Listener de los campos
         trabajadorManager = getTrabajadorManagerImplementation();
+        zonaManager = getZonaManagerImplementation();
+        granjaManager = new GranjaManagerImplementation();
+
         tablaTrabajador.setEditable(true);
 
         // Vincular columnas con el valor correspondiente.
@@ -122,14 +136,13 @@ public class TrabajadoresController {
         cBoxFiltro.getSelectionModel().selectedItemProperty().addListener(this::handleCambioFiltro);
         cBoxOpcion.getSelectionModel().selectedItemProperty().addListener(this::handleOpcionSeleccionada);
         // Listener de los botones.
-        btnBuscar.setOnAction(this::buscarContratos);
+        btnBuscar.setOnAction(this::buscarTrabajadores);
         btnContratar.setOnAction(this::contratarTrabajador);
         btnAsignar.setOnAction(this::asignarZonaTrabajador);
         // Confirmacion de cerrado
         stage.setOnCloseRequest(this::confirmClose);
-        // Listener de cambios en las celdas de la tabla.
 
-        //cambiarFormatoFecha();
+        // Listener de cambios en las celdas de la tabla.
         // Control de seleccion de fila
         tablaTrabajador.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
@@ -155,36 +168,43 @@ public class TrabajadoresController {
     public void handleCambioFiltro(ObservableValue ov, Object oldValue, Object newValue) {
         if (newValue != null) {
 
-            String filtro = cBoxFiltro.getValue();
-
-            GranjaClient webClientGranja = new GranjaClient();
-            btnBuscar.setDisable(true);
-            cBoxOpcion.setDisable(false);
-            cBoxOpcion.setItems(null);
-            Collection lista;
-            switch (filtro) {
-                case ("Contratados"):
-
-                    // En proceso
-                    lista = webClientGranja.findAll_XML(new GenericType<List<GranjaEntity>>() {
-                    });
-                    cargarDatosFiltrado(lista);
-                    break;
-                case ("Contratables"):
-
-                    lista = webClientGranja.findAll_XML(new GenericType<List<GranjaEntity>>() {
-                    });
-                    cargarDatosFiltrado(lista);
-                    break;
-
-                case ("Zona"):
-
-                    break;
-                case ("Todos"):
-                    btnBuscar.setDisable(false);
-                    cBoxOpcion.setDisable(true);
-                    break;
+            try {
+                String filtro = cBoxFiltro.getValue();
+                
+                GranjaClient webClientGranja = new GranjaClient();
+                btnBuscar.setDisable(true);
+                cBoxOpcion.setDisable(false);
+                cBoxOpcion.setItems(null);
+                Collection lista;
+                switch (filtro) {
+                    case ("Contratados"):
+                        
+                        // En proceso
+                        lista = granjaManager.getAllGranjas();
+                        cargarDatosFiltrado(lista);
+                        break;
+                    case ("Contratables"):
+                        
+                        lista = granjaManager.getAllGranjas();
+                        cargarDatosFiltrado(lista);
+                        break;
+                        
+                    case ("Zona"):
+                        lista = zonaManager.getAllZonas();
+                        cargarDatosFiltrado(lista);
+                        break;
+                    case ("Todos"):
+                        btnBuscar.setDisable(false);
+                        cBoxOpcion.setDisable(true);
+                        break;
+                        
+                }
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
             }
+
         }
     }
 
@@ -201,43 +221,6 @@ public class TrabajadoresController {
 
     }
 
-    /**
-     * Conversor de los datos que se muestran en la comboBox, haciendo que se
-     * muestre un dato especifico
-     *
-     * @param filtro
-     */
-    /*public void conversorComboOpcion(String filtro) {
-        switch (filtro) {
-            case ("Contratados"):
-                cBoxOpcion.setConverter(new StringConverter() {
-                    @Override
-                    public String toString(Object object) {
-                        return ((TrabajadorEntity) object).getUsername();
-                    }
-
-                    @Override
-                    public Object fromString(String string) {
-                        return null;
-                    }
-                });
-                break;
-            case ("Contratables"):
-                cBoxOpcion.setConverter(new StringConverter() {
-                    @Override
-                    public String toString(Object object) {
-                        return ((GranjaEntity) object).getNombreGranja();
-                    }
-
-                    @Override
-                    public Object fromString(String string) {
-                        return null;
-                    }
-                });
-
-        }
-
-    }*/
     /**
      * En proceso.
      *
@@ -262,30 +245,35 @@ public class TrabajadoresController {
      * @param event
      */
     @FXML
-    public void buscarContratos(ActionEvent event) {
-        Collection<TrabajadorEntity> trabajadores = null;
-        String id;
-        switch (cBoxFiltro.getValue()) {
-            case ("Contratados"):
-                id = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
-                trabajadores = trabajadorManager.getTrabajadoresGranja(id);
-                break;
-            case ("Contratables"):
-                id = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
-                trabajadores = trabajadorManager.getTrabajadoresPorContratar(id);
+    public void buscarTrabajadores(ActionEvent event) {
+        try {
+            Collection<TrabajadorEntity> trabajadores = null;
+            String id;
+            switch (cBoxFiltro.getValue()) {
+                case ("Contratados"):
+                    id = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
+                    trabajadores = trabajadorManager.getTrabajadoresGranja(id);
+                    break;
+                case ("Contratables"):
+                    id = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
+                    trabajadores = trabajadorManager.getTrabajadoresPorContratar(id);
+                    break;
 
-                break;
+                case ("Zona"):
+                    id = String.valueOf(((ZonaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdZona());
+                    trabajadores = trabajadorManager.getTrabajadoresZona(id);
+                    break;
+                case ("Todos"):
+                    trabajadores = trabajadorManager.getAllTrabajadores();
+                    break;
 
-            case ("Zona"):
-
-                break;
-            case ("Todos"):
-                trabajadores = trabajadorManager.getAllTrabajadores();
-                // contratos = contratoManager.getContratosGranjero("2");
-                break;
-
+            }
+            cargarDatos(trabajadores);
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        cargarDatos(trabajadores);
     }
 
     /**
@@ -318,7 +306,7 @@ public class TrabajadoresController {
             LOGGER.info("Inicio del stage de Session");
             controller.trabajadorSeleccionado((TrabajadorEntity) tablaTrabajador.getSelectionModel().getSelectedItem(), true);
             controller.initStage(root);
-            
+
             //  paneVentana.getScene().getWindow().hide();
         } catch (IOException ex) {
             Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
@@ -341,57 +329,103 @@ public class TrabajadoresController {
         if (!ButtonType.OK.equals(close.get())) {
             event.consume();
         }
-        
+
     }
 
     public void asignarZonaTrabajador(ActionEvent event) {
-        trabajadoresAsignar.add(tablaTrabajador.getSelectionModel().getSelectedItem());
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"¿Quiere seguir asignando trabajadores a la zona?");
-          Button btnClose = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        trabajadoresAsignar = new ArrayList();
+
+        trabajadoresAsignar.add((TrabajadorEntity) tablaTrabajador.getSelectionModel().getSelectedItem());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Â¿Quiere seguir asignando trabajadores a la zona?");
+        Button btnClose = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
         btnClose.setText("Volver");
         // Muestra el alert a la espera de la pulsacion de un boton del alert.
         Optional<ButtonType> close = alert.showAndWait();
         if (!ButtonType.OK.equals(close.get())) {
             event.consume();
-        }else{
+        } else {
             volverZonas();
         }
     }
 
-    public void habilitarAsignarTrabajador(Zona zona) {
+    public void habilitarAsignarTrabajador(boolean zonaExiste, ZonaEntity zona) {
+        zonaSeleccionada = zona;
+        zonaCreada = zonaExiste;
         btnAsignar.setVisible(true);
         Collection trabajadores;
-        trabajadores = getTrabajadorManagerImplementation()
-                .getTrabajadoresPorAsignarZona(zona.getIdZona(), zona.getGranja().getIdGranja());
+        try {
+            if (zonaExiste) {
+                trabajadores = getTrabajadorManagerImplementation()
+                        .getTrabajadoresPorAsignarZona(zona.getIdZona(), zona.getGranja().getIdGranja());
+            } else {
+                trabajadores = getTrabajadorManagerImplementation().getAllTrabajadores();
+            }
+        
         tablaTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
         cBoxFiltro.setDisable(true);
         cBoxOpcion.setDisable(true);
         btnBuscar.setDisable(true);
         btnContratar.setVisible(false);
-        
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     private void volverZonas() {
-         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/ContratarTrabajador.fxml"));
-            // Se carga el FXML de Session
-            Parent root;
+        try {
+            if (zonaCreada) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/VentanaZona.fxml"));
+                // Se carga el FXML de Session
+                Parent root;
 
-            root = (Parent) loader.load();
+                root = (Parent) loader.load();
 
-            LOGGER.info("Llamada al controlador del FXML");
-            // Se recoge el controlador del FXML
-            ContratarTrabajadorController controller = ((ContratarTrabajadorController) loader.getController());
-            controller.setStage(stage);
-            LOGGER.info("Inicio del stage de Session");
-            controller.trabajadorSeleccionado((TrabajadorEntity) tablaTrabajador.getSelectionModel().getSelectedItem(), true);
-            controller.initStage(root);
-            
+                LOGGER.info("Llamada al controlador del FXML");
+                // Se recoge el controlador del FXML
+                ZonaController controller = ((ZonaController) loader.getController());
+                controller.setStage(stage);
+
+                LOGGER.info("Inicio del stage de Session");
+
+                controller.initStage(root);
+                controller.asignarTrabajadores(trabajadoresAsignar, zonaSeleccionada);
+            } else {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/CrearZona.fxml"));
+                // Se carga el FXML de Session
+                Parent root;
+
+                root = (Parent) loader.load();
+
+                LOGGER.info("Llamada al controlador del FXML");
+                // Se recoge el controlador del FXML
+                CrearZonaController controller = ((CrearZonaController) loader.getController());
+                controller.setStage(stage);
+
+                LOGGER.info("Inicio del stage de Session");
+
+                controller.initStage(root);
+                controller.asignarTrabajadores(trabajadoresAsignar, zonaSeleccionada);
+            }
 
             //  paneVentana.getScene().getWindow().hide();
         } catch (IOException ex) {
             Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
+    /* public void asignarTrabajadorZonas(ZonaEntity zona) {
+        btnBuscar.setDisable(true);
+        btnContratar.setDisable(true);
+        btnInforme.setDisable(true);
+        cBoxFiltro.setDisable(true);
+        cBoxOpcion.setDisable(true);
+        Collection trabajadores = trabajadorManager.getTrabajadoresPorAsignarZona(zona.getIdZona(), zona.getGranja().getIdGranja());
+        tablaTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
+        
+
+    }*/
 }

@@ -16,7 +16,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Clase de contrato.
  * @author Jonathan Camacho y Alain Cosgaya
  */
 @XmlRootElement()
@@ -24,16 +24,17 @@ public class ContratoEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Atributos de la clase.
+     */
     private SimpleObjectProperty<ContratoId> idContrato;
-   
-    private SimpleObjectProperty<TrabajadorEntity> trabajador; 
-    
+
+    private SimpleObjectProperty<TrabajadorEntity> trabajador;
+
     private SimpleObjectProperty<GranjaEntity> granja;
-   
+
     private SimpleObjectProperty<Date> fechaContratacion;
 
-    //private SimpleStringProperty fechaContratacion;
-    
     private SimpleLongProperty salario;
 
     public Long getSalario() {
@@ -44,36 +45,26 @@ public class ContratoEntity implements Serializable {
         this.salario.set(salario);
     }
 
-      public ContratoEntity() {
+    public ContratoEntity() {
         this.idContrato = new SimpleObjectProperty();
         this.trabajador = new SimpleObjectProperty();
         this.granja = new SimpleObjectProperty();
-       
+
         this.fechaContratacion = new SimpleObjectProperty();
         //this.fechaContratacion = new SimpleStringProperty();
         this.salario = new SimpleLongProperty();
     }
 
-    
-     public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, Date fechaContratacion, Long salario) {
+    public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, Date fechaContratacion, Long salario) {
         this.idContrato = new SimpleObjectProperty(idContrato);
         this.trabajador = new SimpleObjectProperty(trabajador);
         this.granja = new SimpleObjectProperty(granja);
-       
+
         this.fechaContratacion = new SimpleObjectProperty(fechaContratacion);
         this.salario = new SimpleLongProperty(salario);
     }
-    /* public ContratoEntity(ContratoId idContrato, TrabajadorEntity trabajador, GranjaEntity granja, String fechaContratacion, Long salario) {
-        this.idContrato = new SimpleObjectProperty(idContrato);
-        this.trabajador = new SimpleObjectProperty(trabajador);
-        this.granja = new SimpleObjectProperty(granja);
-       
-        this.fechaContratacion = new SimpleStringProperty(fechaContratacion);
-        this.salario = new SimpleLongProperty(salario);
-    }*/
-    
 
-    
+   
     public ContratoId getIdContrato() {
         return (ContratoId) this.idContrato.get();
     }
@@ -97,8 +88,7 @@ public class ContratoEntity implements Serializable {
     public void setGranja(GranjaEntity granja) {
         this.granja.set(granja);
     }
-    
-    
+
     public Date getFechaContratacion() {
         return this.fechaContratacion.get();
     }
@@ -106,16 +96,8 @@ public class ContratoEntity implements Serializable {
     public void setFechaContratacion(Date fechaContratacion) {
         this.fechaContratacion.set(fechaContratacion);
     }
-    
-    
-   /* public String getFechaContratacion() {
-        return this.fechaContratacion.get();
-    }
 
-    public void setFechaContratacion(String fechaContratacion) {
-        this.fechaContratacion.set(fechaContratacion);
-    }*/
-
+    
     @Override
     public int hashCode() {
         int hash = 3;

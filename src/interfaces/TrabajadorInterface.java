@@ -7,6 +7,8 @@ package interfaces;
 
 import clases.ContratoEntity;
 import clases.TrabajadorEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import java.util.Collection;
 
 /**
@@ -15,17 +17,17 @@ import java.util.Collection;
  */
 public interface TrabajadorInterface {
 
-    public Collection<TrabajadorEntity> getAllTrabajadores();
+    public Collection<TrabajadorEntity> getAllTrabajadores() throws ClienteServidorConexionException, BDServidorException ;
 
-    public Collection<TrabajadorEntity> getTrabajadoresPorContratar(String idGranja);
+    public Collection<TrabajadorEntity> getTrabajadoresPorContratar(String idGranja) throws ClienteServidorConexionException, BDServidorException ;
 
-    public Collection<TrabajadorEntity> getTrabajadoresGranja(String idGranja);
+    public Collection<TrabajadorEntity> getTrabajadoresGranja(String idGranja) throws ClienteServidorConexionException, BDServidorException ;
 
-    public Collection<TrabajadorEntity> getTrabajadoresZona(String idZona);
+    public Collection<TrabajadorEntity> getTrabajadoresZona(String idZona) throws ClienteServidorConexionException, BDServidorException ;
 
-    public Collection<TrabajadorEntity> getTrabajadoresPorAsignarZona(Long idZona,Long idGranja);
+    public Collection<TrabajadorEntity> getTrabajadoresPorAsignarZona(Long idZona,Long idGranja) throws ClienteServidorConexionException, BDServidorException ;
     
-    public TrabajadorEntity getTrabajador(String idTrabajador);
+    public TrabajadorEntity getTrabajador(String idTrabajador) throws ClienteServidorConexionException, BDServidorException ;
     
     public void Registro();
 }

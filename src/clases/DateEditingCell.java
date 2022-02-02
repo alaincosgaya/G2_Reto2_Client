@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -16,8 +17,9 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 
 /**
+ * Clase para poder utilizar un DatePicker dentro de una tabla.
  *
- * @author YO
+ * @author Alain Cosgaya
  */
 public class DateEditingCell extends TableCell<ContratoEntity, Date> {
 
@@ -27,6 +29,9 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
 
     }
 
+    /**
+     * Control para cuando se inicia la edicion.
+     */
     @Override
     public void startEdit() {
         if (!isEmpty()) {
@@ -37,6 +42,9 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
         }
     }
 
+    /**
+     * Control para cuando se cancela la edicion.
+     */
     @Override
     public void cancelEdit() {
         super.cancelEdit();
@@ -45,6 +53,12 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
         setGraphic(null);
     }
 
+    /**
+     * Control para la actualizacion de los elementos de la tabla.
+     *
+     * @param item Elemento de tipo Date en la tabla.
+     * @param empty Booleano para controlar si tiene contenido.
+     */
     @Override
     public void updateItem(Date item, boolean empty) {
         super.updateItem(item, empty);
@@ -67,16 +81,23 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
         }
     }
 
+    /**
+     * Metodo para la creacion de un DatePicker.
+     */
     private void createDatePicker() {
         datePicker = new DatePicker(getDate());
         datePicker.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         datePicker.setOnAction((e) -> {
-            
-            commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.of("GMT")).toInstant()));
+
+            commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         });
     }
 
+    /**
+     * Metodo para le recuperacion de fecha.
+     * @return Devuelve la fecha actual. 
+     */
     private LocalDate getDate() {
         return LocalDate.now();
     }

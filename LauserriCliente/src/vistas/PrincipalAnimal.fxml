@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="panePrincipalAnimal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.PrincipalAnimalController">
+   
+    <top>
+      <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" styleClass="background" BorderPane.alignment="CENTER">
+         
+          
+        </Pane>
+    </top>
+    <bottom>
+        <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+            <children>
+                <fx:include fx:id="hBoxMenu" source="Menu.fxml" />
+            </children>
+            <children>
+                <Button fx:id="btnInforme" cancelButton="true" focusTraversable="false" layoutX="525.0" layoutY="279.0" mnemonicParsing="false" onAction="#generarInforme" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Informe" />
+            
+                <Button fx:id="btnCrearAnimal" defaultButton="true" focusTraversable="false" layoutX="521.0" layoutY="69.0" mnemonicParsing="false" onAction="#aniadirAnimal" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Añadir animal" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+
+                <TableView fx:id="tablaAnimal" editable="true" layoutX="23.0" layoutY="100.0" prefHeight="206.0" prefWidth="467.0" styleClass="table-view ,collumn-header-backgroud" stylesheets="@fxml.css">
+                    <columns>
+                        <TableColumn fx:id="colNombre" prefWidth="75.0" styleClass="collumn-header-backgroud" text="Nombre" />
+                        <TableColumn fx:id="colTipo" prefWidth="72.79998779296875" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Tipo" />
+                        <TableColumn fx:id="colEstado" prefWidth="71.20001220703125" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Estado" />
+                        <TableColumn fx:id="colSexo" prefWidth="65.5999755859375" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Sexo" />
+                        <TableColumn fx:id="colFechaNacimiento" prefWidth="135.199951171875" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Fecha nacimiento" />
+                        <TableColumn fx:id="colZona" minWidth="0.0" prefWidth="45.60003662109375" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Zona" />
+                    </columns>
+                </TableView>
+                <ComboBox fx:id="seleccionFiltro" layoutX="47.0" layoutY="51.0" prefHeight="27.0" prefWidth="119.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <Label layoutX="35.0" layoutY="27.0" text="Consultar por" />
+                <ComboBox fx:id="seleccionDato" layoutX="196.0" layoutY="51.0" prefHeight="27.0" prefWidth="120.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <Separator layoutX="135.0" layoutY="37.0" prefHeight="4.0" prefWidth="353.0" />
+                <Separator layoutX="13.0" layoutY="90.0" prefHeight="4.0" prefWidth="478.0" />
+                <Separator layoutX="486.0" layoutY="38.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="7.0" />
+                <Separator layoutX="11.0" layoutY="38.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="8.0" />
+                <Separator layoutX="13.0" layoutY="37.0" prefHeight="5.0" prefWidth="20.0" />
+                <Button fx:id="btnBuscar" layoutX="365.0" layoutY="52.0" mnemonicParsing="false" onAction="#buscarAnimal" prefHeight="27.0" prefWidth="83.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Buscar" />
+                <Button fx:id="btnEliminar" defaultButton="true" disable="true" focusTraversable="false" layoutX="521.0" layoutY="119.0" mnemonicParsing="false" onAction="#eliminarAnimal" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Eliminar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+            
+            </children>
+         
+        </Pane>
+    </bottom>
+   
+</BorderPane>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ResetPasswdController">
+   
+    <top>
+        <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" styleClass="background" stylesheets="@fxml.css" BorderPane.alignment="CENTER">
+         
+            <!--<children>
+               <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@/photos/descargas-removebg-preview.png" />
+                  </image>
+               </ImageView>
+            </children>-->
+      
+        </Pane>
+    </top>
+   
+    <center>
+        <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+            <children>
+                <fx:include fx:id="hBoxMenu" source="Menu.fxml"/>
+            </children>
+            <children>
+            
+                <Label layoutX="149.0" layoutY="71.0" prefHeight="66.0" prefWidth="309.0" styleClass="txt" stylesheets="@fxml.css" text="Escribe la dirección de correo de la cuenta &#10;que estás tratando de recuperar.&#10;">
+                    <font>
+                        <Font size="15.0" />
+                    </font>
+                </Label>
+            
+                <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="149.0" layoutY="221.0" mnemonicParsing="false" onAction="#buttonEventBack" onMouseClicked="#buttonEventBack" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Atrás" />
+            
+                <Separator layoutX="56.0" layoutY="49.0" prefHeight="1.0" prefWidth="495.0" />
+            
+                <TextField fx:id="txtEmail" focusTraversable="false" layoutX="148.0" layoutY="147.0" onKeyTyped="#eventKey" prefHeight="27.0" prefWidth="310.0" promptText="ejemplo@live.com" style="-fx-border-color: #a7c957;" />
+            
+                <Button fx:id="btnEnviar" defaultButton="true" disable="true" focusTraversable="false" layoutX="349.0" layoutY="221.0" mnemonicParsing="false" onAction="#buttonEvent" onMouseClicked="#buttonEvent" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" stylesheets="@fxml.css" text="Enviar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
+            
+                <Label fx:id="lblEmail" focusTraversable="false" layoutX="465.0" layoutY="152.0" prefHeight="17.0" prefWidth="169.0" styleClass="except" stylesheets="@fxml.css" text="* Formato de correo incorrecto" textFill="RED" visible="false" />
+                <Label layoutX="57.0" styleClass="header" stylesheets="@fxml.css" text="Necesitamos comprobar tu identidad">
+                    <font>
+                        <Font size="30.0" />
+                    </font>
+                </Label>
+            </children>
+         
+        </Pane>
+    </center>
+   
+</BorderPane>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox fx:id="hBoxMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="734.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.MenuController">
+   <children>
+      <MenuBar fx:id="menuBar" prefHeight="26.0" prefWidth="745.0" style="-fx-background-color: white;">
+         <menus>
+            <Menu fx:id="inicioMenu" mnemonicParsing="false" text="Inicio">
+               <items>
+                  <MenuItem fx:id="granjaMenuItem" mnemonicParsing="false" onAction="#menuGranja" text="Granja" />
+                  <MenuItem fx:id="zonaMenuItem" mnemonicParsing="false" onAction="#menuZona" text="Zona" />
+                  <MenuItem fx:id="animalMenuItem" mnemonicParsing="false" onAction="#menuAnimal" text="Animal" />
+               </items>
+            </Menu>
+            <Menu fx:id="trabajadorMenu" mnemonicParsing="false" text="Trabajador">
+               <items>
+                  <MenuItem fx:id="contratosMenuItem" mnemonicParsing="false" onAction="#menuContratos" text="Contratos" />
+                  <MenuItem fx:id="trabajadoresMenuItem" mnemonicParsing="false" onAction="#menuTrabajadores" text="Trabajadores" />
+               </items>
+            </Menu>
+            <Menu fx:id="relleno" disable="true" mnemonicParsing="false" text="                                                                                " />
+            <Menu fx:id="perfilMenu" mnemonicParsing="false" text="Perfil">
+               <items>
+                  <MenuItem fx:id="perfilMenuItem" mnemonicParsing="false" onAction="#menuPerfil" text="Perfil" />
+               </items>
+            </Menu>
+            <Menu fx:id="salirMenu" mnemonicParsing="false" text="Salir">
+               <items>
+                  <MenuItem fx:id="salirMenuItem" mnemonicParsing="false" onAction="#menuSalir" text="Salir" />
+                  <MenuItem fx:id="sesionMenuItem" mnemonicParsing="false" onAction="#sesionMenu" text="Cerrar Sesión" />
+               </items>
+            </Menu>
+         </menus>
+      </MenuBar>
+   </children>
+</HBox>

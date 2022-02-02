@@ -9,7 +9,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * JavaBean de
+ * JavaBean de AnimalEntity con sus gettters y setters, constructores,
+ * parametros y metodos hashCode, equals y tooString
  *
  * @author Jonathan Camacho
  */
@@ -18,78 +19,13 @@ public class AnimalEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-   /* private Long idAnimal;
-    private String nombreAnimal;
-    private TipoAnimal tipo;
-    private EstadoAnimal estado;
-    private Date fechaNacimiento;
-    private SexoAnimal sexo;
-    private Zona zona;
-
-    public Long getIdAnimal() {
-        return idAnimal;
-    }
-
-    public void setIdAnimal(Long idAnimal) {
-        this.idAnimal = idAnimal;
-    }
-
-    public String getNombreAnimal() {
-        return nombreAnimal;
-    }
-
-    public void setNombreAnimal(String nombreAnimal) {
-        this.nombreAnimal = nombreAnimal;
-    }
-
-    public TipoAnimal getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(TipoAnimal tipo) {
-        this.tipo = tipo;
-    }
-
-    public EstadoAnimal getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoAnimal estado) {
-        this.estado = estado;
-    }
-
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public SexoAnimal getSexo() {
-        return sexo;
-    }
-
-    public void setSexo(SexoAnimal sexo) {
-        this.sexo = sexo;
-    }
-
-    public Zona getZona() {
-        return zona;
-    }
-
-    public void setZona(Zona zona) {
-        this.zona = zona;
-    }*/
-
-    
     private SimpleLongProperty idAnimal;
     private SimpleStringProperty nombreAnimal;
     private SimpleObjectProperty<TipoAnimal> tipo;
     private SimpleObjectProperty<EstadoAnimal> estado;
     private SimpleObjectProperty<Date> fechaNacimiento;
     private SimpleObjectProperty<SexoAnimal> sexo;
-    private SimpleObjectProperty<Zona> zona;
+    private SimpleObjectProperty<ZonaEntity> zona;
 
     //constructor publico vacio
     public AnimalEntity() {
@@ -103,7 +39,7 @@ public class AnimalEntity implements Serializable {
     }
 
     //constructor con parametros
-    public AnimalEntity(Long idAnimal, String nombreAnimal, TipoAnimal tipo, EstadoAnimal estado, Date fechaNacimiento, SexoAnimal sexo, Zona zona) {
+    public AnimalEntity(Long idAnimal, String nombreAnimal, TipoAnimal tipo, EstadoAnimal estado, Date fechaNacimiento, SexoAnimal sexo, ZonaEntity zona) {
         this.idAnimal = new SimpleLongProperty(idAnimal);
         this.nombreAnimal = new SimpleStringProperty(nombreAnimal);
         this.tipo = new SimpleObjectProperty(tipo);
@@ -162,14 +98,14 @@ public class AnimalEntity implements Serializable {
         this.sexo.set(sexo);
     }
 
-    public Zona getZona() {
+    public ZonaEntity getZona() {
         return this.zona.get();
     }
 
-    public void setZona(Zona zona) {
+    public void setZona(ZonaEntity zona) {
         this.zona.set(zona);
     }
-     
+
     //metodos
     @Override
     public int hashCode() {

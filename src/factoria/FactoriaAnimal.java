@@ -1,14 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package factoria;
 
+import interfaces.InterfazAnimal;
+
 /**
+ * Factoria de animal con la cual se implementan los metodos de la clase
+ * AnimalImplementacion
  *
- * @author 2dam
+ * @author Jonathan Camacho
  */
 public class FactoriaAnimal {
-    
+
+    public static InterfazAnimal getInterfazAnimalImplementacion() {
+        InterfazAnimal animalManager = new AnimalImplementacion();
+        return animalManager;
+    }
 }

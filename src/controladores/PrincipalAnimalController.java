@@ -5,11 +5,16 @@ import clases.DateEditingCell;
 import clases.EstadoAnimal;
 import clases.SexoAnimal;
 import clases.TipoAnimal;
-import clases.Zona;
+import clases.ZonaEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
+import excepciones.ConnectException;
+import excepciones.InvalidNameException;
 import factoria.AnimalImplementacion;
-import factoria.ZonaManagerImplementation;
+import factoria.FactoriaAnimal;
+import factoria.ZonaManagerImplementacion;
 import interfaces.InterfazAnimal;
-import interfaces.ZonaInterface;
+import interfaces.InterfazZona;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -20,6 +25,8 @@ import java.util.Observable;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
@@ -41,15 +48,19 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.FormatStringConverter;
 import javafx.util.converter.LongStringConverter;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.NotFoundException;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
@@ -68,47 +79,90 @@ public class PrincipalAnimalController {
     private Stage stage;
     //interfaces que se utilizaran en el controlador
     private InterfazAnimal animalManager;
-    private ZonaInterface zonaManager;
-
+    private InterfazZona zonaManager;
+    //Listas que se utilizaran en el controlador
     private ObservableList<AnimalEntity> animales;
     private ObservableList estados;
     private ObservableList sexo;
     private ObservableList tipo;
 
-    private boolean agregarAnimal;
     //Clase animalEntity
     private AnimalEntity animalEntity;
     //Elementos de la ventana PrincipalAnimal FXML
+    /**
+     * Panel de Principal Animal.
+     */
     @FXML
     private BorderPane panePrincipalAnimal;
-    @FXML
-    private Button btnInforme;
-    @FXML
-    private Button btnCrearAnimal;
+    /**
+     * Tabla en la que se cargarán los animales.
+     */
     @FXML
     private TableView tablaAnimal;
+    /**
+     * Columna en la cual aparecerá el nombre del animal.
+     */
     @FXML
     private TableColumn colNombre;
+    /**
+     * Columna en la cual aparecerá el tipo de animal.
+     */
     @FXML
     private TableColumn<TipoAnimal, TipoAnimal> colTipo;
+    /**
+     * Columna en la cual aparecerá el estado de dicho animal.
+     */
     @FXML
     private TableColumn<EstadoAnimal, EstadoAnimal> colEstado;
+    /**
+     * Columna en la cual aparecerá el sexo del animal.
+     */
     @FXML
     private TableColumn<SexoAnimal, SexoAnimal> colSexo;
+    /**
+     * Columna en la cual aparecerá la fecha en la que nació tal animal.
+     */
     @FXML
     private TableColumn colFechaNacimiento;
+    /**
+     * Columna en la cual aparecerá el nombre de la zona a la que pertenece.
+     */
     @FXML
     private TableColumn<AnimalEntity, String> colZona;
+    /**
+     * ComboBox en la cual se podrá seleccionar el tipo de filtro deseado.
+     */
     @FXML
     private ComboBox<String> seleccionFiltro;
+    /**
+     * ComboBox en la cual, en función al filtro seleccionado, permitirá al
+     * usuario seleccionar el tipo de dato por el que se desea filtrar.
+     */
     @FXML
     private ComboBox seleccionDato;
+    /**
+     * Boton con el cual se generara el informe.
+     */
+    @FXML
+    private Button btnInforme;
+    /**
+     * Boton con el cual se permitirá al usuario ir al formulario de creacion de
+     * animales.
+     */
+    @FXML
+    private Button btnCrearAnimal;
+    /**
+     * Boton con el cual se permitirá la búsqueda de los animales en funcion al
+     * filtrado seleccionado.
+     */
     @FXML
     private Button btnBuscar;
+    /**
+     * Boton con el cual se permitirá la eliminación del animal seleccionado en
+     * la tabla.
+     */
     @FXML
     private Button btnEliminar;
-    @FXML
-    private Button btnInsertar;
 
     /**
      * Metodo que indica el stage.
@@ -132,103 +186,101 @@ public class PrincipalAnimalController {
      * @param root
      */
     public void initStage(Parent root) {
-        // TODO
-        Scene scene = new Scene(root, 640, 360);
-        stage.setResizable(false);
-        stage.setTitle("PrincipalAnimal");
-        stage.setScene(scene);
-        agregarAnimal = false;
-        //implemenmtacion de AnimalImplementation
-        animalManager = new AnimalImplementacion();
-        //btnBuscar.setDisable(true);
-        //inicializamos la Tabla Animal con sus columnas
-        tablaAnimal.setEditable(true);
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreAnimal"));
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
-        colSexo.setCellValueFactory(new PropertyValueFactory<>("sexo"));
-        colFechaNacimiento.setCellValueFactory(new PropertyValueFactory<>("fechaNacimiento"));
-        colZona.setCellValueFactory(new PropertyValueFactory<>("zona"));
-        //columnas editables de la tabla
-        estados = FXCollections.observableArrayList(EstadoAnimal.values());
-        colEstado.setCellFactory(ComboBoxTableCell.forTableColumn(estados));
-        sexo = FXCollections.observableArrayList(SexoAnimal.values());
-        colSexo.setCellFactory(ComboBoxTableCell.forTableColumn(sexo));
-        tipo = FXCollections.observableArrayList(TipoAnimal.values());
-        colTipo.setCellFactory(ComboBoxTableCell.forTableColumn(tipo));
-        colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
-        colFechaNacimiento.setCellFactory(new Callback<TableColumn, TableCell>() {
-            @Override
-            public TableCell call(TableColumn p) {
-                DateEditingCell dateEdit = new DateEditingCell();
-                return dateEdit;
-            }
-        });
-        //metodo encargado del editado de la columna zona
-        cargarZonasColumn();
-        //lista de filtros inicializada
-        seleccionFiltro();
-        //llamada al metodo que selecciona el tipo de datos a cargar en la comboBox
-        //en funcion al filtro seleccionado
-        seleccionFiltro.getSelectionModel().selectedItemProperty().addListener(this::seleccionDato);
-        //commit que guardara los cambios reslizados en las columnas
-        colEstado.setOnEditCommit(this::modificarEstado);
-        colSexo.setOnEditCommit(this::modificarSexo);
-        colTipo.setOnEditCommit(this::modificarTipo);
-        colNombre.setOnEditCommit(this::modificarNombre);
-        colFechaNacimiento.setOnEditCommit(this::modificarFecha);
-        colZona.setOnEditCommit(this::modificarZona);
-        //botones con la accion que ejecutaran
-        btnInsertar.setOnAction(this::insertarAnimal);
-        btnBuscar.setOnAction(this::buscarAnimal);
-        btnCrearAnimal.setOnAction(this::aniadirAnimal);
-        btnEliminar.setOnAction(this::eliminarAnimal);
-        //Control de seleccion de fila, en caso de seleccionar una se controla que
-        //el boton este habilitado
-        tablaAnimal.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                btnEliminar.setDisable(false);
-            } else {
-                btnEliminar.setDisable(true);
-            }
-        });
-        //Se inicia la ventana con los datos cargados en la tabla
-        animales = FXCollections.observableArrayList(animalManager.getAllAnimales());
-        tablaAnimal.setItems(animales);
-        //se muestra el stage
-        stage.show();
+        try {
+            // Inicializacion
+            Scene scene = new Scene(root, 640, 360);
+            stage.setResizable(false);
+            stage.setTitle("PrincipalAnimal");
+            stage.setScene(scene);
+            //implementacion de AnimalImplementation
+            LOGGER.info("Inicializacion de los diferentes elementos que componen la ventana PrincipalAnimal");
+            animalManager = FactoriaAnimal.getInterfazAnimalImplementacion();
+            //inicializamos la Tabla Animal con sus columnas
+            tablaAnimal.setEditable(true);
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreAnimal"));
+            colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+            colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+            colSexo.setCellValueFactory(new PropertyValueFactory<>("sexo"));
+            colFechaNacimiento.setCellValueFactory(new PropertyValueFactory<>("fechaNacimiento"));
+            colZona.setCellValueFactory(new PropertyValueFactory<>("zona"));
+            //columnas editables de la tabla
+            estados = FXCollections.observableArrayList(EstadoAnimal.values());
+            colEstado.setCellFactory(ComboBoxTableCell.forTableColumn(estados));
+            sexo = FXCollections.observableArrayList(SexoAnimal.values());
+            colSexo.setCellFactory(ComboBoxTableCell.forTableColumn(sexo));
+            tipo = FXCollections.observableArrayList(TipoAnimal.values());
+            colTipo.setCellFactory(ComboBoxTableCell.forTableColumn(tipo));
+            colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
+            colFechaNacimiento.setCellFactory(new Callback<TableColumn, TableCell>() {
+                @Override
+                public TableCell call(TableColumn p) {
+                    DateEditingCell dateEdit = new DateEditingCell();
+                    return dateEdit;
+                }
+            });
+            //metodo encargado del editado de la columna zona
+            cargarZonasColumn();
+            //lista de filtros inicializada
+            seleccionFiltro();
+            //llamada al metodo que selecciona el tipo de datos a cargar en la comboBox en funcion al filtro seleccionado
+            seleccionFiltro.getSelectionModel().selectedItemProperty().addListener(this::seleccionDato);
+            //commit que guardara los cambios reslizados en las columnas
+            colEstado.setOnEditCommit(this::modificarEstado);
+            colSexo.setOnEditCommit(this::modificarSexo);
+            colTipo.setOnEditCommit(this::modificarTipo);
+            colNombre.setOnEditCommit(this::modificarNombre);
+            colFechaNacimiento.setOnEditCommit(this::modificarFecha);
+            colZona.setOnEditCommit(this::modificarZona);
+            //botones con la accion que ejecutaran
+            btnBuscar.setOnAction(this::buscarAnimal);
+            btnCrearAnimal.setOnAction(this::aniadirAnimal);
+            btnEliminar.setOnAction(this::eliminarAnimal);
+            btnInforme.setOnAction(this::generarInforme);
+            //Control de seleccion de fila, en caso de seleccionar una se controla que el boton este habilitado
+            tablaAnimal.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    btnEliminar.setDisable(false);
+                } else {
+                    btnEliminar.setDisable(true);
+                }
+            });
+            //Se inicia la ventana con los datos cargados en la tabla
+            animales = FXCollections.observableArrayList(animalManager.getAllAnimales());
+            tablaAnimal.setItems(animales);
+            //se muestra el stage
+            stage.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
     }
 
     /**
-     * Metodo el cual, mediante la pulsacion del boton insertar "+", se
-     * encargara de generar un informe con todos los datos de la tabla animal
+     * Metodo el cual, mediante la pulsacion del boton informe, se encargara de
+     * generar un informe con todos los datos de la tabla animal
      *
      * @param event
      */
     @FXML
     private void generarInforme(ActionEvent event) {
-        /*
         JasperReport report;
         try {
-            report = JasperCompileManager.compileReport(getClass()
-                    .getResourceAsStream("/javafxapplicationud3example/ui/report/newReport1.jrxml"));
-
-            //Data for the report: a collection of UserBean passed as a JRDataSource 
-            //implementation 
-            JRBeanCollectionDataSource dataItems
-                    = new JRBeanCollectionDataSource((Collection<UserBean>) this.tbUsers.getItems());
-            //Map of parameter to be passed to the report
+            //ruta donde se compila el report
+            LOGGER.info("Generando el informe con los datos de todos los animales actualmente introducidos");
+            report = JasperCompileManager.compileReport("src/informes/ReportAnimales.jrxml");
+            JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource((Collection<AnimalEntity>) this.tablaAnimal.getItems());
             Map<String, Object> parameters = new HashMap<>();
-            //Fill report with data
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
-            //Create and show the report window. The second parameter false value makes 
-            //report window not to close app.
-            JasperViewer jasperViewer = new JasperViewer(jasperPrint, false);
+            JasperViewer jasperViewer = new JasperViewer(jasperPrint);
             jasperViewer.setVisible(true);
         } catch (JRException ex) {
             Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Error al generar el informe, intentelo más tarde");
+
         }
-        */
     }
 
     /**
@@ -253,8 +305,9 @@ public class PrincipalAnimalController {
 
             panePrincipalAnimal.getScene().getWindow().hide();
 
-        } catch (IOException e) {
-
+        } catch (IOException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema al abrir el formulario de creación, disculpe las molestias");
         }
     }
 
@@ -264,12 +317,13 @@ public class PrincipalAnimalController {
      */
     @FXML
     public void seleccionFiltro() {
+        LOGGER.info("Cargado de datos en la combo Filtro");
         ObservableList<String> filtro = FXCollections.observableArrayList("Tipo", "Estado", "Sexo", "Todos");
         seleccionFiltro.setItems(filtro);
     }
 
     /**
-     * metodo el cual se encarga de cargar los datos de la comboBox
+     * Metodo el cual se encarga de cargar los datos de la comboBox
      * seleccionDato en funcion del tipo de filtro que se ha escogido
      * previamente.
      *
@@ -279,6 +333,7 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void seleccionDato(ObservableValue ov, String oldValue, String newValue) {
+        LOGGER.info("Cargado de datos en la combo Dato");
         if (newValue != null) {
 
             String filtro = seleccionFiltro.getValue();
@@ -286,16 +341,22 @@ public class PrincipalAnimalController {
             seleccionDato.setItems(null);
             //Collection lista = null;
             if (filtro.equalsIgnoreCase("Tipo")) {
+                btnBuscar.setDisable(false);
                 ObservableList<TipoAnimal> listaTipo = FXCollections.observableArrayList(TipoAnimal.values());
                 seleccionDato.setItems(listaTipo);
             }
             if (filtro.equalsIgnoreCase("Estado")) {
+                btnBuscar.setDisable(false);
                 ObservableList<EstadoAnimal> listaEstado = FXCollections.observableArrayList(EstadoAnimal.values());
                 seleccionDato.setItems(listaEstado);
             }
             if (filtro.equalsIgnoreCase("Sexo")) {
+                btnBuscar.setDisable(false);
                 ObservableList<SexoAnimal> listaSexo = FXCollections.observableArrayList(SexoAnimal.values());
                 seleccionDato.setItems(listaSexo);
+            }
+            if (filtro.equalsIgnoreCase("Todos")) {
+                btnBuscar.setDisable(false);
             }
         }
     }
@@ -309,29 +370,39 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void buscarAnimal(ActionEvent event) {
-        String filtro = (String) seleccionFiltro.getValue();
-        Collection<AnimalEntity> animales = null;
-        String dato;
-        switch (filtro) {
-            case ("Tipo"):
-                dato = seleccionDato.getValue().toString();
-                animales = animalManager.getAnimalesPorTipo(dato);
-                break;
-            case ("Estado"):
-                dato = seleccionDato.getValue().toString();
-                animales = animalManager.getAnimalesPorEstado(dato);
-
-                break;
-            case ("Sexo"):
-                dato = seleccionDato.getValue().toString();
-                animales = animalManager.getAnimalesPorSexo(dato);
-                break;
-            case ("Todos"):
-                animales = animalManager.getAllAnimales();
-                break;
-
+        LOGGER.info("Busqueda de los animales en funcion del filtro deseado");
+        try {
+            String filtro = (String) seleccionFiltro.getValue();
+            Collection<AnimalEntity> animales = null;
+            String dato;
+            switch (filtro) {
+                case ("Tipo"):
+                    dato = seleccionDato.getValue().toString();
+                    animales = animalManager.getAnimalesPorTipo(dato);
+                    break;
+                case ("Estado"):
+                    dato = seleccionDato.getValue().toString();
+                    animales = animalManager.getAnimalesPorEstado(dato);
+                    break;
+                case ("Sexo"):
+                    dato = seleccionDato.getValue().toString();
+                    animales = animalManager.getAnimalesPorSexo(dato);
+                    break;
+                case ("Todos"):
+                    animales = animalManager.getAllAnimales();
+                    break;
+            }
+            cargarDatos(animales);
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        } catch (Exception ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema debido a que no se ha seleccionado el filtro correctamente, por favor agrege uno.");
         }
-        cargarDatos(animales);
 
     }
 
@@ -342,7 +413,7 @@ public class PrincipalAnimalController {
      * @param animalesList
      */
     public void cargarDatos(Collection<AnimalEntity> animalesList) {
-
+        LOGGER.info("Cargado de datos en la tabla");
         animales = FXCollections.observableArrayList(animalesList);
         tablaAnimal.setItems(animales);
     }
@@ -356,13 +427,21 @@ public class PrincipalAnimalController {
      */
     @FXML
     public void modificarEstado(Event event) {
+        try {
+            LOGGER.info("Se procede a realizar el cambio de estado");
+            AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            String estado = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            animalManager.cambiarEstadoAnimal(animal.getIdAnimal(), estado);
 
-        AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String estado = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        animalManager.cambiarEstadoAnimal(animal.getIdAnimal(), estado);
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de estado");
-        alert.show();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de estado");
+            alert.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
 
     }
 
@@ -374,12 +453,21 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void modificarSexo(Event event) {
-        AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String sexo = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        animalManager.cambiarSexoAnimal(animal.getIdAnimal(), sexo);
+        try {
+            LOGGER.info("Se procede a realizar el cambio de Sexo");
+            AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            String sexo = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            animalManager.cambiarSexoAnimal(animal.getIdAnimal(), sexo);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de sexo");
-        alert.show();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de sexo");
+            alert.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
     }
 
     /**
@@ -390,12 +478,21 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void modificarTipo(Event event) {
-        AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String tipo = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        animalManager.cambiarTipoAnimal(animal.getIdAnimal(), tipo);
+        try {
+            LOGGER.info("Se procede a realizar el cambio de Tipo");
+            AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            String tipo = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            animalManager.cambiarTipoAnimal(animal.getIdAnimal(), tipo);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de tipo");
-        alert.show();
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de tipo");
+            alert.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
     }
 
     /**
@@ -407,12 +504,36 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void modificarNombre(Event event) {
+        LOGGER.info("Se procede a realizar el cambio de Nombre");
         AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String nombre = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        animalManager.cambiarNombreAnimal(animal.getIdAnimal(), nombre);
+        try {
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de nombre");
-        alert.show();
+            String nombre = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            validarMinimoCaracteresPattern(nombre);
+            animalManager.cambiarNombreAnimal(animal.getIdAnimal(), nombre);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de nombre");
+            alert.show();
+        } catch (InvalidNameException ine) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "El nombre contiene muy pocos caracteres, mínimo se requieren 2");
+            alert.show();
+            colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("El campo no puede quedar en blanco, por favor, introduzca un nombre adecuado");
+            colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
+        } catch (NotFoundException nfe) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, nfe);
+            mostrarError("El campo no puede quedar en blanco, por favor, introduzca un nombre");
+            colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
+
     }
 
     /**
@@ -424,17 +545,24 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void modificarFecha(Event event) {
-        //animalEntity = new AnimalEntity();
-        AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        //animalEntity.setFechaNacimiento((Date) ((TableColumn.CellEditEvent) event).getNewValue());
+        try {
+            LOGGER.info("Se procede a realizar el cambio de fecha de nacimiento del animal");
 
-        Date fecha = (Date) ((TableColumn.CellEditEvent) event).getNewValue();
+            AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            Date fecha = (Date) ((TableColumn.CellEditEvent) event).getNewValue();
+            animal.setFechaNacimiento(fecha);
+            animalManager.editarAnimal(animal);
 
-        animal.setFechaNacimiento(fecha);
-        animalManager.editarAnimal(animal);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de fecha");
+            alert.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de fecha");
-        alert.show();
     }
 
     /**
@@ -445,13 +573,22 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void modificarZona(Event event) {
-        AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        ZonaEntity zona = (ZonaEntity) ((TableColumn.CellEditEvent) event).getNewValue();
-        //  animalManager.cambiarZonaAnimal(animal.getIdAnimal(), zona);
-        animal.setZona(zona);
-        animalManager.editarAnimal(animal);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de zona del animal");
-        alert.show();
+        try {
+            LOGGER.info("Se procede a realizar el cambio de zona a la que pertenece el animal");
+            AnimalEntity animal = (AnimalEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            ZonaEntity zona = (ZonaEntity) ((TableColumn.CellEditEvent) event).getNewValue();
+            //  animalManager.cambiarZonaAnimal(animal.getIdAnimal(), zona);
+            animal.setZona(zona);
+            animalManager.editarAnimal(animal);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Se ha realizado el cambio de zona del animal");
+            alert.show();
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+        } catch (BDServidorException ex) {
+            Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+            mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+        }
     }
 
     /**
@@ -465,6 +602,7 @@ public class PrincipalAnimalController {
      */
     @FXML
     private void eliminarAnimal(ActionEvent event) {
+        LOGGER.info("Se procede a eliminar al animal");
         AnimalEntity animal = (AnimalEntity) tablaAnimal.getSelectionModel().getSelectedItem();
         //informamos al usuario con un alert de confirmacion.
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "¿Estas seguro de que quieres eliminar al animal?");
@@ -473,25 +611,25 @@ public class PrincipalAnimalController {
         // Muestra el alert a la espera de la pulsacion de un boton del alert.
         Optional<ButtonType> close = alert.showAndWait();
         if (ButtonType.OK.equals(close.get())) {
-            animalManager.eliminarAnimal(animal.getIdAnimal());
-            buscarAnimal(event);
-        }
-    }
+            try {
+                animalManager.eliminarAnimal(animal.getIdAnimal());
+                alert = new Alert(Alert.AlertType.INFORMATION, "Animal eliminado exitosamente");
+                alert.show();
+                //carga de nuevo los datos de la tabla
+                Collection<AnimalEntity> animales = null;
+                animales = animalManager.getAllAnimales();
+                cargarDatos(animales);
 
-    ////////////////////////////////////////////////////////////////////////////////Agregar valores a la tabla, de momento no funcional
-    @FXML
-    private void insertarAnimal(ActionEvent event) {
-        if (!agregarAnimal) {
-            agregarAnimal = true;
-            colNombre.setEditable(true);
-            colTipo.setEditable(true);
-            colEstado.setEditable(true);
-            colSexo.setEditable(true);
-            colFechaNacimiento.setEditable(true);
-            colZona.setEditable(true);
-            animalEntity = new AnimalEntity();
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+                mostrarError("Ha surgido un problema a la hora de conectarse con el servidor, por favor intentelo más tarde.");
+            } catch (BDServidorException ex) {
+                Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, ex);
+                mostrarError("Ha surgido un problema con el servidor, por favor intentelo más tarde.");
+            }
         } else {
-            agregarAnimal = false;
+            alert = new Alert(Alert.AlertType.INFORMATION, "Borrado Cancelado");
+            alert.show();
         }
     }
 
@@ -500,8 +638,40 @@ public class PrincipalAnimalController {
      * la columna Zonas de la tabla animales.
      */
     private void cargarZonasColumn() {
-        zonaManager = new ZonaManagerImplementation();
+        zonaManager = new ZonaManagerImplementacion();
         ObservableList zonas = FXCollections.observableArrayList(zonaManager.getAllZonas());
         colZona.setCellFactory(ComboBoxTableCell.forTableColumn(zonas));
+    }
+
+    /**
+     * Metodo con el cual se mostrarán los errores al usuario
+     *
+     * @param errorMsg
+     */
+    protected void mostrarError(String errorMsg) {
+        LOGGER.info("Se procede a mostrar por pantalla el error");
+        //Muestra el alert de error con el mensaje correspondiente
+        Alert alert = new Alert(Alert.AlertType.ERROR, errorMsg, ButtonType.OK);
+        alert.showAndWait();
+
+    }
+
+    /**
+     * El metodo que controla los caracteres mínimos del nombre.
+     *
+     * @param nombre recoge el valor del nombre.
+     * @throws InvalidNameException
+     */
+    public void validarMinimoCaracteresPattern(String nombre)
+            throws InvalidNameException {
+        String regex = "^(.+){2,30}$";
+
+        Pattern pattern = Pattern.compile(regex);
+
+        Matcher matcher = pattern.matcher(nombre);
+
+        if (!matcher.matches()) {
+            throw new InvalidNameException("Numero de caracteres excesivos");
+        }
     }
 }

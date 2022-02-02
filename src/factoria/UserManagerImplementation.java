@@ -45,7 +45,7 @@ public class UserManagerImplementation implements UserInterface {
     public UserEntity findClient(UserEntity user) {
         UserEntity users = null;
         webClient.find(new GenericType<UserEntity>() {
-        }, user.getId().toString());
+        }, user.getId());
         return users;
     }
     
@@ -72,7 +72,8 @@ public class UserManagerImplementation implements UserInterface {
     public void actualizarCon(UserEntity user) {
         user.setPassword(CifradoClient.encrypt(user.getPassword()));
         //String id = user.getId().toString();
-        webClient.edit(user, user.getId().toString());
+        System.out.println(user);
+        webClient.edit(user, user.getId());
     }
     
     @Override

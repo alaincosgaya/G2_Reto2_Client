@@ -75,7 +75,9 @@ public class CifradoClient {
             //key = readPublicKey("./cifrado/public.key");
             
             cipher.init(Cipher.ENCRYPT_MODE, readPublicKey());
+            //System.out.println(plaintext);
             bs = cipher.doFinal(plaintext.getBytes());
+            //System.out.println(bs);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | IOException | InvalidKeySpecException ex) {
             Logger.getLogger(CifradoClient.class.getName()).log(Level.SEVERE, null, ex);
         }

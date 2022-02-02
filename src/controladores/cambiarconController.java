@@ -40,7 +40,7 @@ import javafx.stage.Stage;
  *
  * @author 2dam
  */
-public class cambiarconController implements Initializable{
+public class cambiarconController implements Initializable {
 
     private Stage stage;
     private static final Logger LOGGER = Logger.getLogger(App.class.getName());
@@ -60,17 +60,15 @@ public class cambiarconController implements Initializable{
 
     @FXML
     private Button btnAtras;
-    
+
     @FXML
     private Label lblCaract;
-    
+
     @FXML
     private Label lblNum;
-    
+
     @FXML
     private Label lblPasswd2;
-    
-    
 
     public void setStage(Stage stage1) {
         stage = stage1;
@@ -82,6 +80,7 @@ public class cambiarconController implements Initializable{
         stage.setTitle("CambiarCon");
         stage.setScene(scene);
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
+
         stage.show();
         this.user = user;
     }
@@ -115,15 +114,18 @@ public class cambiarconController implements Initializable{
         //String con = CifradoClient.encrypt(PasswdActual.getText());
         user.setPassword(PasswdActual.getText());
         UserInterface u = new UserManagerImplementation();
-        
-        UserEntity find = u.findClientValidatePasswd(user);
-        System.out.println(find);
-            if(!find.equals(null)){
-                u.actualizarCon(user);
-            }else
-                System.out.println(PasswdActual.getText());
-        System.out.println(user.getPassword());
+
+        user = u.findClientValidatePasswd(user);
+        System.out.println(user);
+        if (!user.equals(null)) {
+            user.setPassword(PasswdNueva.getText());
+            
+            u.actualizarCon(user);
+        } else {
+            System.out.println(PasswdActual.getText());
+            System.out.println(user.getPassword());
             System.out.println("Mal : ");
+        }
 
         ((Node) (event.getSource())).getScene().getWindow().hide();
     }
@@ -170,14 +172,12 @@ public class cambiarconController implements Initializable{
                 PasswdNueva.textProperty().isEmpty().or(
                         PasswdActual.textProperty().isEmpty()).or(
                         PasswdRepetir.textProperty().isEmpty().or(
-                        lblCaract.visibleProperty().or(
-                                lblNum.visibleProperty().or(lblPasswd2.visibleProperty())
+                                lblCaract.visibleProperty().or(
+                                        lblNum.visibleProperty().or(lblPasswd2.visibleProperty())
+                                )
                         )
                 )
-        )
-    
-
-    );
+        );
     }
 
     @Override
@@ -212,7 +212,7 @@ public class cambiarconController implements Initializable{
             //throw new PasswordNumException(lblNum.getText());
         }
     }
-    
+
     private void repeatpasswd() {
 
         PasswdRepetir.textProperty().addListener((ov, oldV, newV) -> {
@@ -229,7 +229,7 @@ public class cambiarconController implements Initializable{
             }
         });
     }
-    
+
     public void validarEqualPasswd() throws SamePasswordException {
         if (!PasswdNueva.getText().equals(PasswdRepetir.getText())) {
             throw new SamePasswordException(lblPasswd2.getText());

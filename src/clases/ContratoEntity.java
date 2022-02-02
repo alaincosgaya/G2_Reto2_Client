@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Clase de contrato.
+ *
  * @author Jonathan Camacho y Alain Cosgaya
  */
 @XmlRootElement()
@@ -37,14 +38,7 @@ public class ContratoEntity implements Serializable {
 
     private SimpleLongProperty salario;
 
-    public Long getSalario() {
-        return this.salario.get();
-    }
-
-    public void setSalario(Long salario) {
-        this.salario.set(salario);
-    }
-
+    // Constructores de la clase
     public ContratoEntity() {
         this.idContrato = new SimpleObjectProperty();
         this.trabajador = new SimpleObjectProperty();
@@ -63,8 +57,15 @@ public class ContratoEntity implements Serializable {
         this.fechaContratacion = new SimpleObjectProperty(fechaContratacion);
         this.salario = new SimpleLongProperty(salario);
     }
+    // Getters y Setters
+    public Long getSalario() {
+        return this.salario.get();
+    }
 
-   
+    public void setSalario(Long salario) {
+        this.salario.set(salario);
+    }
+
     public ContratoId getIdContrato() {
         return (ContratoId) this.idContrato.get();
     }
@@ -96,8 +97,8 @@ public class ContratoEntity implements Serializable {
     public void setFechaContratacion(Date fechaContratacion) {
         this.fechaContratacion.set(fechaContratacion);
     }
-
     
+    // HashCode
     @Override
     public int hashCode() {
         int hash = 3;
@@ -108,7 +109,8 @@ public class ContratoEntity implements Serializable {
         hash = 67 * hash + Objects.hashCode(this.salario);
         return hash;
     }
-
+    
+    // Metodo equals
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -139,6 +141,7 @@ public class ContratoEntity implements Serializable {
         return true;
     }
 
+    // Metodo toString
     @Override
     public String toString() {
         return "ContratoEntity{" + "idContrato=" + idContrato + ", trabajador=" + trabajador + ", granja=" + granja + ", fechaContratacion=" + fechaContratacion + ", salario=" + salario + '}';

@@ -150,7 +150,7 @@ public class ContratosController {
 
         stage.setTitle("Contratos");
         stage.setScene(scene);
-        LOGGER.info("Llamada a los metodos y restricciones del controlador");
+        LOGGER.log(Level.INFO,"Llamada a los metodos y restricciones del controlador");
         contratar = false;
         // Uso de factorias para recuperar implementaciones.
         contratoManager = getContratoManagerImplementation();
@@ -298,8 +298,8 @@ public class ContratosController {
     @FXML
     public void handleOpcionSeleccionada(Observable ov) {
         LOGGER.info("Opcion seleccionada");
-        
-        if (((ObservableValue)ov).getValue() != null) {
+
+        if (((ObservableValue) ov).getValue() != null) {
             btnBuscar.setDisable(false);
             cBoxOpcion.setValue(cBoxOpcion.getSelectionModel().getSelectedItem());
             String filtro = cBoxFiltro.getValue();
@@ -342,6 +342,11 @@ public class ContratosController {
         btnBuscar.setDisable(true);
     }
 
+    /**
+     * Abre la ventana de contratar Trabajador.
+     *
+     * @param event
+     */
     @FXML
     public void contratarTrabajador(ActionEvent event) {
 
@@ -385,23 +390,39 @@ public class ContratosController {
 
     }
 
+    /**
+     * Metodo para la insercion de filas para la creacion de contratos. En el
+     * caso de que se haya pulsado por primera vez, se insertara una fila a la
+     * tabla, habilitando la edicion de estos. En el caso de que se pulse el
+     * botón por segunda vez, se insertara el contrato con los parametros
+     * establecidos.
+     *
+     * @param event
+     */
     @FXML
     public void insertarFila(ActionEvent event) {
+        // Comprueba si se ha insertado una fila previamente.
         if (!contratar) {
+            // Habilitaria la edicion de campos e iniciaria la insercion de datos.
+            LOGGER.log(Level.INFO, "Inicio de insercion de fila para contrato");
             contratar = true;
             colFechaCon.setEditable(true);
             colTrabajador.setEditable(true);
             colGranja.setEditable(true);
             contratoInsert = new ContratoEntity();
             idContrato = new ContratoId();
+            // Cargaria los datos en las columnas de trabajadores y granjas.
             cargarTrabajadoresColumn();
             cargarGranjasColumn();
 
             tablaContratos.getItems().add(new ContratoEntity());
-            tablaContratos.getSelectionModel().select(tablaContratos.getItems().size());
-            tablaContratos.getFocusModel().focus(tablaContratos.getItems().size(), colTrabajador);
+            tablaContratos.getSelectionModel().selectLast();
+            tablaContratos.layout();
+            tablaContratos.edit(tablaContratos.getSelectionModel().getSelectedIndex(), colTrabajador);
         } else {
-            try {
+            try {     
+                // Deshabilitaria la edicion de campos y ejecutaria el metodo de contratar.
+                LOGGER.log(Level.INFO, "Creacion de contrato en base a los datos");
                 contratar = false;
                 contratoInsert.setIdContrato(idContrato);
                 contratoManager.contratarTrabajador(contratoInsert);
@@ -426,13 +447,23 @@ public class ContratosController {
         }
     }
 
+    /**
+     * Metodo para la modificacion del salario definido para un contrato. Se
+     * comprobaria si se ha realizado una pulsacion previa del boton de
+     * insercion de fila, para la modificacion o guardado del salario definido.
+     *
+     * @param event
+     */
     @FXML
     public void modificarSalario(Event event) {
+        // Comprobar si se ha iniciado una insercion de contratos.
         LOGGER.log(Level.INFO, "Comprobando creacion o modificacion");
         if (!contratar) {
             try {
                 LOGGER.log(Level.INFO, "Modificando salario");
+                // Recupera el valor de la fila seleccionada.
                 ContratoEntity contrato = (ContratoEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+                // Recupera el valor del salario introducido.
                 String salario = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
                 contratoManager.cambiarSueldo(String.valueOf(contrato.getIdContrato().getTrabajadorId()),
                         String.valueOf(contrato.getIdContrato().getGranjaId()), salario);
@@ -448,16 +479,28 @@ public class ContratosController {
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
+            // Guardaria el nuevo salario.
+            LOGGER.log(Level.INFO, "Guardando salario del contrato");
             contratoInsert.setSalario((Long) ((TableColumn.CellEditEvent) event).getNewValue());
         }
 
     }
 
+    /**
+     * Metodo para la realizacion del despido de un trabajador. Se avisaria con
+     * un Alert al usuario antes de hacer el despido. En el caso de que este de
+     * acuerdo, se realizaria una comprobacion de las zonas, comprobando si esta
+     * en alguna zona asignado. En el caso de que este asignado, se le avisaria
+     * al usuario y se cancelaria el despido.
+     *
+     * @param event
+     */
     @FXML
     public void despedirTrabajador(ActionEvent event) {
         try {
             LOGGER.log(Level.INFO, "Iniciando despido del trabajador.");
             ContratoEntity contrato;
+            // Recupera el contrato seleccionado
             contrato = (ContratoEntity) tablaContratos.getSelectionModel().getSelectedItem();
             Alert alertDespido = new Alert(Alert.AlertType.CONFIRMATION, "¿Estas seguro de que quiere despedir al trabajador?");
             Button btnClose = (Button) alertDespido.getDialogPane().lookupButton(ButtonType.OK);
@@ -468,10 +511,10 @@ public class ContratosController {
                 event.consume();
                 LOGGER.log(Level.INFO, "Despido cancelado");
             } else {
+                // Comprobaria las zonas
                 Collection<ZonaEntity> zonas = null;
-
+                LOGGER.log(Level.INFO, "Iniciando comprobación de zonas");
                 zonas = zonaManager.getZonasPorTrabajador(contrato.getTrabajador().getUsername());
-                System.out.println(zonas);
                 if (zonas.isEmpty()) {
                     contratoManager.despedirTrabajador(String.valueOf(contrato.getIdContrato().getTrabajadorId()),
                             String.valueOf(contrato.getIdContrato().getGranjaId()));
@@ -500,6 +543,10 @@ public class ContratosController {
         }
     }
 
+    /**
+     * Metodo para el cargado de trabajadores en una combobox de una columna de
+     * la tabla.
+     */
     public void cargarTrabajadoresColumn() {
 
         try {
@@ -520,10 +567,14 @@ public class ContratosController {
 
     }
 
+    /**
+     * Metodo para el cargado de granjas en una combobox de una columna de la
+     * tabla.
+     */
     public void cargarGranjasColumn() {
         try {
             LOGGER.log(Level.INFO, "Cargando datos en columna de granjas");
-            granjas = FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero("g3"));
+            granjas = FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero("g1"));
             colGranja.setCellFactory(ComboBoxTableCell.forTableColumn(granjas));
 
         } catch (ClienteServidorConexionException ex) {
@@ -540,6 +591,11 @@ public class ContratosController {
 
     }
 
+    /**
+     * Guardado del trabajador para la creación del contrato.
+     *
+     * @param event
+     */
     public void guardarTrabajador(Event event) {
         LOGGER.log(Level.INFO, "Guardando trabajador para el contrato.");
         contratoInsert.setTrabajador((TrabajadorEntity) ((TableColumn.CellEditEvent) event).getNewValue());
@@ -547,6 +603,11 @@ public class ContratosController {
 
     }
 
+    /**
+     * Guaraddo de la granja para la creacion del contrato.
+     *
+     * @param event
+     */
     public void guardarGranja(Event event) {
         LOGGER.log(Level.INFO, "Guardando granja para el contrato");
         contratoInsert.setGranja((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue());
@@ -554,14 +615,24 @@ public class ContratosController {
 
     }
 
+    /**
+     * Guardado de la fecha para la creacion del contrato.
+     *
+     * @param event
+     */
     public void guardarFecha(Event event) {
         LOGGER.log(Level.INFO, "Guardando nueva fecha de contratacion.");
         contratoInsert.setFechaContratacion((Date) ((TableColumn.CellEditEvent) event).getNewValue());
 
     }
 
+    /**
+     * Cancelar edicion deshabilitando los habilitados previamente.
+     *
+     * @param event
+     */
     public void cancelarEdicion(Event event) {
-        LOGGER.log(Level.INFO, "Edicion de datos cancelada.");
+        LOGGER.log(Level.INFO, "Creacion del contrato cancelada.");
         contratar = false;
         colFechaCon.setEditable(false);
         colTrabajador.setEditable(false);
@@ -577,40 +648,45 @@ public class ContratosController {
      */
     private void buscarContratos() {
         Collection<ContratoEntity> contratos = null;
-        String id;
-        try {
-            LOGGER.log(Level.INFO, "Realizando busqueda de contratos.");
-            switch (cBoxFiltro.getValue()) {
-                case ("Trabajador"):
-                    // Recupera los contratos del trabajador.
+        LOGGER.log(Level.INFO,"Comprobando si se ha seleccionado algun tipo de filtro."); 
+                
+        if (!cBoxFiltro.getSelectionModel().isEmpty()) {
+            try {
+                LOGGER.log(Level.INFO, "Realizando busqueda de contratos.");
 
-                    contratos = contratoManager.getContratosTrabajador(idBusqueda);
-                    break;
-                case ("Granja"):
-                    // Recupera los contratos de la granja.
+                switch (cBoxFiltro.getValue()) {
+                    case ("Trabajador"):
+                        // Recupera los contratos del trabajador.
 
-                    contratos = contratoManager.getContratosGranja(idBusqueda);
+                        contratos = contratoManager.getContratosTrabajador(idBusqueda);
+                        break;
+                    case ("Granja"):
+                        // Recupera los contratos de la granja.
 
-                    break;
-                case ("Todos"):
-                    // Recupera todos los contratos.
-                    contratos = contratoManager.getAllContratos();
-                    // contratos = contratoManager.getContratosGranjero("2");
-                    break;
+                        contratos = contratoManager.getContratosGranja(idBusqueda);
 
+                        break;
+                    case ("Todos"):
+                        // Recupera todos los contratos.
+                        contratos = contratoManager.getAllContratos();
+                        // contratos = contratoManager.getContratosGranjero("2");
+                        break;
+
+                }
+                cargarDatos(contratos);
+            } catch (ClienteServidorConexionException ex) {
+                alertErrores("Debido a un problema al conectarse al servidor,"
+                        + " no se ha podido realizar la busqueda de contratos, en el caso de "
+                        + "que este error persista, contacte con el soporte tecnico.");
+                Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                alertErrores("Debido a un problema del servidor,"
+                        + " no se ha podido realizar la busqueda de contratos, en el caso de "
+                        + "que este error persista, contacte con el soporte tecnico.");
+                Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            cargarDatos(contratos);
-        } catch (ClienteServidorConexionException ex) {
-            alertErrores("Debido a un problema al conectarse al servidor,"
-                    + " no se ha podido realizar la busqueda de contratos, en el caso de "
-                    + "que este error persista, contacte con el soporte tecnico.");
-            Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (BDServidorException ex) {
-            alertErrores("Debido a un problema del servidor,"
-                    + " no se ha podido realizar la busqueda de contratos, en el caso de "
-                    + "que este error persista, contacte con el soporte tecnico.");
-            Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     /**
@@ -650,10 +726,16 @@ public class ContratosController {
         }
     }
 
+    /**
+     * Metodo para la impresion del informe de los datos de la tabla.
+     *
+     * @param event
+     */
     public void imprimirInforme(ActionEvent event) {
         try {
             LOGGER.log(Level.INFO, "Imprimiendo informe de los datos de la tabla.");
-            JasperReport report = JasperCompileManager.compileReport("src/vistas/InformeContratos.jrxml");
+            // Compila el informe, en base a la ruta establecida.
+            JasperReport report = JasperCompileManager.compileReport("src/informes/informeContratos.jrxml");
             JRBeanCollectionDataSource dataItems = new JRBeanCollectionDataSource((Collection<ContratoEntity>) this.tablaContratos.getItems());
             Map<String, Object> parameters = new HashMap<>();
             JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataItems);
@@ -665,6 +747,11 @@ public class ContratosController {
         }
     }
 
+    /**
+     * Alert que se le mostrara al usuario
+     *
+     * @param message
+     */
     public void alertErrores(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
         alert.showAndWait();

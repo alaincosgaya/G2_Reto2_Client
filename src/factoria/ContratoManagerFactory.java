@@ -8,8 +8,8 @@ package factoria;
 import interfaces.ContratoInterface;
 
 /**
- *
- * @author 2dam
+ * Factoria de Implementaciones de contratos.
+ * @author Alain Cosgaya 
  */
 public class ContratoManagerFactory {
     public static ContratoInterface getContratoManagerImplementation(){

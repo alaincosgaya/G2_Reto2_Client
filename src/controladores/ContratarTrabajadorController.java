@@ -49,7 +49,7 @@ import restful.GranjaClient;
  */
 public class ContratarTrabajadorController {
 
-    private static final Logger LOGGER = Logger.getLogger(ContratosController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ContratarTrabajadorController.class.getName());
 
     private Stage stage;
 
@@ -102,16 +102,18 @@ public class ContratarTrabajadorController {
 
         stage.setTitle("Contratos");
         stage.setScene(scene);
-        LOGGER.info("Llamada a los metodos y restricciones del controlador");
-        // Listener de los campos
-        GranjaClient webClientGranja = new GranjaClient();
+        LOGGER.log(Level.INFO,"Llamada a los metodos y restricciones del controlador");
+        // Interfaces de implementaciones de clases.
         contratoManager = getContratoManagerImplementation();
         granjaManager = new GranjaManagerImplementation();
         trabajadorManager = getTrabajadorManagerImplementation();
+        // Valor del DatePicker por defecto
         datePickerContrato.setValue(Optional.ofNullable(datePickerContrato.getValue()).orElse(LocalDate.now()));
         trabajadorSeleccionado = null;
+        // Comprueba si se ha seleccionado un trabajador previamente
         if (!boolTrabajador) {
             try {
+                LOGGER.log(Level.INFO, "Cargando trabajadores en la combobox.");
                 cBoxTrabajador.setItems(FXCollections.observableArrayList(trabajadorManager.getAllTrabajadores()));
             } catch (ClienteServidorConexionException ex) {
                 alertErrores("Debido a un problema del servidor,"
@@ -126,9 +128,21 @@ public class ContratarTrabajadorController {
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        cBoxGranja.setItems(FXCollections.observableArrayList(webClientGranja.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
+        try {
+            LOGGER.log(Level.INFO, "Cargando granjas en la combobox.");
+            cBoxGranja.setItems(FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero("g1")));
+        } catch (ClienteServidorConexionException ex) {
+            alertErrores("Debido a un problema del servidor,"
+                    + " no se han podido cargar las granjas. En el caso de "
+                    + "que este error persista, contacte con el soporte tecnico.");
+            Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
 
-        }, "g1")));
+        } catch (BDServidorException ex) {
+            alertErrores("Debido a un problema al conectarse al servidor,"
+                    + " no se han podido cargar las granjas. En el caso de "
+                    + "que este error persista, contacte con el soporte tecnico.");
+            Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         cBoxTrabajador.getSelectionModel().selectedItemProperty().addListener(this::handleSeleccionTrabajador);
         cBoxGranja.getSelectionModel().selectedItemProperty().addListener(this::filtradoTrabajadores);
         camposReportados();
@@ -139,39 +153,56 @@ public class ContratarTrabajadorController {
 
     }
 
+    /**
+     * Comprueba el trabajador seleccionado, y en base a ello filtra las
+     * granjas.
+     *
+     * @param ov
+     */
     public void handleSeleccionTrabajador(Observable ov) {
-        LOGGER.info("Accede: " + trabajadorSeleccionado);
+        LOGGER.log(Level.INFO, "Comprobando el trabajador seleccionado");
 
         ObservableValue obsV = (ObservableValue) ov;
-        LOGGER.info("Seleccion: " + obsV.getValue());
+        // Comprueba si es nula la seleccion.
         if (obsV.getValue() != null) {
-            
+            // Comprueba si el trabajador seleccionado ya habia sido seleccionado
+            // previamente.
             if (!obsV.getValue().equals(trabajadorSeleccionado)) {
 
-                LOGGER.info("Selecciona un nuevo trabajador: " + obsV.getValue());
+                LOGGER.log(Level.INFO, "Nuevo trabajador seleccionado: {0}", obsV.getValue());
                 cBoxTrabajador.setValue(cBoxTrabajador.getSelectionModel().getSelectedItem());
                 trabajadorSeleccionado = cBoxTrabajador.getSelectionModel().getSelectedItem();
-
+                // Ejecuta el filtrado de granjas
                 filtradoGranjas(cBoxTrabajador.getSelectionModel().getSelectedItem());
 
             }
         }
     }
 
+    /**
+     * Comprueba la granja seleccionada, y en base a ello filtra los
+     * trabajadores. Si se ha seleccionado previamente un trabajador, en el caso
+     * de que dicho trabajador se pueda contratar en esa granja, se mantendra
+     * seleccionado.
+     *
+     * @param ov
+     * @param oldValue
+     * @param newValue
+     */
     public void filtradoTrabajadores(ObservableValue ov, Object oldValue, Object newValue) {
         if (newValue != null && oldValue != newValue) {
             try {
-                LOGGER.info("Selecciona una nueva granja");
+                LOGGER.log(Level.INFO, "Granja seleccionada");
                 TrabajadorEntity trabajador;
                 Collection trabajadores;
                 trabajador = cBoxTrabajador.getSelectionModel().getSelectedItem();
 
                 String idGranja = String.valueOf(((GranjaEntity) newValue).getIdGranja());
                 trabajadores = trabajadorManager.getTrabajadoresPorContratar(idGranja);
-                System.out.println(trabajadores);
+                // Carga todos los datos en la combobox.
                 cBoxTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
                 if (trabajadores.contains(trabajador)) {
-                    LOGGER.info("Trabajador seleccionado ya esta en la tabla");
+                    LOGGER.log(Level.INFO, "Trabajador seleccionado disponible para contratar");
                     cBoxTrabajador.getSelectionModel().select(trabajador);
                 }
             } catch (ClienteServidorConexionException ex) {
@@ -190,6 +221,9 @@ public class ContratarTrabajadorController {
         }
     }
 
+    /**
+     * Comprueba que todos los campos tienen contenido.
+     */
     public void camposReportados() {
         btnContratar.disableProperty().bind(
                 cBoxTrabajador.valueProperty().isNull().or(
@@ -199,8 +233,16 @@ public class ContratarTrabajadorController {
         );
     }
 
+    /**
+     * Metodo para la contratacion de un trabajador. Recoge el valor de todos
+     * los campos y crea un contrato.
+     *
+     * @param event
+     */
     public void contratarTrabajador(ActionEvent event) {
         try {
+            // Guarda todos los datos en un objeto de Contrato
+            LOGGER.log(Level.INFO, "Iniciando creacion de contrato");
             ContratoId idContrato = new ContratoId();
             idContrato.setGranjaId(cBoxGranja.getSelectionModel().getSelectedItem().getIdGranja());
             idContrato.setTrabajadorId(cBoxTrabajador.getSelectionModel().getSelectedItem().getId());
@@ -211,9 +253,10 @@ public class ContratarTrabajadorController {
             contrato.setTrabajador(cBoxTrabajador.getSelectionModel().getSelectedItem());
             contrato.setFechaContratacion(Date.valueOf(datePickerContrato.getValue()));
             contrato.setSalario(Long.parseLong(txtSalario.getText()));
-
+            // Ejecuta el metodo de contratacion.
             contratoManager.contratarTrabajador(contrato);
-
+            // Limpia todos los campos.
+            LOGGER.log(Level.INFO, "Limpiando campos de la tabla");
             cBoxTrabajador.getSelectionModel().clearSelection();
             cBoxGranja.getSelectionModel().clearSelection();
             datePickerContrato.setValue(LocalDate.now());
@@ -232,20 +275,25 @@ public class ContratarTrabajadorController {
         }
     }
 
+    /**
+     * Cierra la ventana actual y abre la ventana de contratos.
+     *
+     * @param event
+     */
     public void volverContratos(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/Contratos.fxml"));
-            // Se carga el FXML de Session
+            // Se carga el FXML de Contratos
 
             Parent root;
 
             root = (Parent) loader.load();
 
-            LOGGER.info("Llamada al controlador del FXML");
+            LOGGER.log(Level.INFO, "Llamada al controlador del FXML");
             // Se recoge el controlador del FXML
             ContratosController controller = ((ContratosController) loader.getController());
             controller.setStage(stage);
-            LOGGER.info("Inicio del stage de Session");
+            LOGGER.log(Level.INFO, "Inicio del stage de Contratos");
             controller.initStage(root);
 
         } catch (IOException ex) {
@@ -254,9 +302,16 @@ public class ContratarTrabajadorController {
 
     }
 
+    /**
+     * Metodo que se ejecuta al haber seleccionado previamente un trabajador.
+     * Cargara el trabajador seleccionado por defecto.
+     *
+     * @param selectedItem
+     * @param vTrabajador
+     */
     public void trabajadorSeleccionado(TrabajadorEntity selectedItem, boolean vTrabajador) {
+        LOGGER.log(Level.INFO, "Cargando trabajador");
         boolTrabajador = vTrabajador;
-        System.out.println(selectedItem);
         cBoxTrabajador.setItems(FXCollections.observableArrayList(selectedItem));
         cBoxTrabajador.getSelectionModel().select(selectedItem);
         cBoxTrabajador.setValue(selectedItem);
@@ -265,19 +320,25 @@ public class ContratarTrabajadorController {
 
     }
 
+    /**
+     * Metodo de filtrado de granjas en base al trabajador seleccionado.
+     *
+     * @param select
+     */
     public void filtradoGranjas(TrabajadorEntity select) {
 
         try {
+            LOGGER.log(Level.INFO, "Iniciando filtrado de granjas");
             GranjaEntity granja;
             Collection granjas;
             granja = cBoxGranja.getSelectionModel().getSelectedItem();
             String usernameTrabajador = select.getUsername();
 
             granjas = granjaManager.getGranjasNoTrabajador(usernameTrabajador);
-
+            // Carga todos los datos en la combobox.
             cBoxGranja.setItems(FXCollections.observableArrayList(granjas));
             if (granjas.contains(granja)) {
-
+                LOGGER.log(Level.INFO, "Granja seleccionada disponible para crear contrato.");
                 cBoxGranja.getSelectionModel().select(granja);
 
             }
@@ -295,12 +356,23 @@ public class ContratarTrabajadorController {
         }
     }
 
+    /**
+     * Metodo para la restriccion de cualquier tipo de valor no numerico.
+     *
+     * @param ov
+     * @param oldValue
+     * @param newValue
+     */
     public void restriccionNumerico(ObservableValue ov, String oldValue, String newValue) {
         if (!newValue.matches("\\d*")) {
             txtSalario.setText(newValue.replaceAll("[^\\d]", ""));
         }
     }
 
+    /**
+     * Alert de errores que se le mostrara al usuario.
+     * @param message
+     */
     public void alertErrores(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
         alert.showAndWait();

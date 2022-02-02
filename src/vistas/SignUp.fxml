@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.SignUpController">
+   
+    <top>
+      <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" styleClass="background" stylesheets="@fxml.css" BorderPane.alignment="CENTER">
+         
+          <!--<children>
+            <ImageView fitHeight="18.0" fitWidth="18.0" layoutX="14.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@/photos/descargas-removebg-preview.png" />
+               </image>
+            </ImageView>
+         </children>-->
+      
+      </Pane>
+   </top>
+   
+   <center>
+      <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+          
+         <children>
+            
+            <Label layoutX="152.0" layoutY="68.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" stylesheets="@fxml.css" text="Usuario" />
+            
+            <Label layoutX="151.0" layoutY="189.0" prefHeight="27.0" prefWidth="68.0" styleClass="txt" stylesheets="@fxml.css" text="Contraseña" />
+            
+            <PasswordField fx:id="txtPasswd" focusTraversable="false" layoutX="307.0" layoutY="190.0" onKeyTyped="#eventKey" prefHeight="25.0" prefWidth="154.0" promptText="Min 8 caract. y números." style="-fx-border-color: #a7c957;" />
+            
+            <TextField fx:id="txtUser" focusTraversable="false" layoutX="308.0" layoutY="69.0" onKeyTyped="#eventKey" prefHeight="25.0" prefWidth="153.0" style="-fx-border-color: #a7c957;" />
+            
+            <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="152.0" layoutY="268.0" mnemonicParsing="false" onAction="#buttonEventBack" onMouseClicked="#buttonEventBack" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Atrás" />
+            
+            <Separator layoutX="54.0" layoutY="26.0" prefHeight="1.0" prefWidth="495.0" />
+            
+            <Label layoutX="152.0" layoutY="102.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" stylesheets="@fxml.css" text="Correo" />
+            
+            <TextField fx:id="txtEmail" focusTraversable="false" layoutX="308.0" layoutY="103.0" onKeyTyped="#eventKey" prefHeight="25.0" prefWidth="153.0" promptText="ejemplo@live.com" style="-fx-border-color: #a7c957;" />
+            
+            <Label layoutX="152.0" layoutY="35.0" prefHeight="27.0" prefWidth="110.0" styleClass="txt" stylesheets="@fxml.css" text="Nombre y apellido" />
+            
+            <TextField fx:id="txtName" layoutX="307.0" layoutY="36.0" prefHeight="25.0" prefWidth="153.0" style="-fx-border-color: #a7c957;" />
+            
+            <Button fx:id="btnSignUp" defaultButton="true" focusTraversable="false" layoutX="352.0" layoutY="268.0" mnemonicParsing="false" onAction="#buttonEvent" onMouseClicked="#buttonEvent" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" stylesheets="@fxml.css" text="Registrarse" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Button>
+            
+            <Label layoutX="151.0" layoutY="221.0" prefHeight="47.0" prefWidth="68.0" styleClass="txt" stylesheets="@fxml.css" text="Repetir&#10;Contraseña" />
+            
+            <PasswordField fx:id="txtPassw2" focusTraversable="false" layoutX="307.0" layoutY="232.0" onKeyTyped="#eventKey" prefHeight="25.0" prefWidth="154.0" promptText="Min 8 caract. y números." style="-fx-border-color: #a7c957;" />
+            
+            <Label fx:id="lblCaract" focusTraversable="false" layoutX="464.0" layoutY="188.0" prefHeight="17.0" prefWidth="153.0" styleClass="except" stylesheets="@fxml.css" text="* Menos de 8 carácteres" textFill="RED" />
+            
+            <Label fx:id="lblNum" focusTraversable="false" layoutX="464.0" layoutY="200.0" prefHeight="17.0" prefWidth="151.0" styleClass="except" stylesheets="@fxml.css" text="* No contiene números" textFill="RED" />
+            
+            <Label fx:id="lblPasswd2" layoutX="464.0" layoutY="236.0" prefHeight="17.0" prefWidth="168.0" styleClass="except" stylesheets="@fxml.css" text="* No coinciden" textFill="RED" />
+            
+            <Label fx:id="lblEmail" focusTraversable="false" layoutX="464.0" layoutY="108.0" prefHeight="17.0" prefWidth="169.0" styleClass="except" stylesheets="@fxml.css" text="* Formato de correo incorrecto" textFill="RED" />
+            <RadioButton fx:id="tgTrabajador" layoutX="309.0" layoutY="135.0" mnemonicParsing="false" text="Trabajador">
+               <toggleGroup>
+                  <ToggleGroup fx:id="Group" />
+               </toggleGroup></RadioButton>
+            <RadioButton fx:id="tgGranjero" layoutX="308.0" layoutY="160.0" mnemonicParsing="false" text="Granjero" toggleGroup="$Group" />
+            <Label layoutX="152.0" layoutY="130.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" stylesheets="@fxml.css" text="Tipo" />
+            <Label layoutX="57.0" layoutY="-23.0" styleClass="header" stylesheets="@fxml.css" text="Crea tu cuenta">
+               <font>
+                  <Font size="30.0" />
+               </font></Label>
+         </children>
+         
+      </Pane>
+   </center>
+   
+</BorderPane>

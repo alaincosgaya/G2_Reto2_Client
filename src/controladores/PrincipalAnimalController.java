@@ -12,9 +12,9 @@ import excepciones.ConnectException;
 import excepciones.InvalidNameException;
 import factoria.AnimalImplementacion;
 import factoria.FactoriaAnimal;
-import factoria.ZonaManagerImplementacion;
+import factoria.ZonaManagerImplementation;
 import interfaces.InterfazAnimal;
-import interfaces.InterfazZona;
+import interfaces.ZonaInterface;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -79,7 +79,7 @@ public class PrincipalAnimalController {
     private Stage stage;
     //interfaces que se utilizaran en el controlador
     private InterfazAnimal animalManager;
-    private InterfazZona zonaManager;
+    private ZonaInterface zonaManager;
     //Listas que se utilizaran en el controlador
     private ObservableList<AnimalEntity> animales;
     private ObservableList estados;
@@ -638,7 +638,7 @@ public class PrincipalAnimalController {
      * la columna Zonas de la tabla animales.
      */
     private void cargarZonasColumn() {
-        zonaManager = new ZonaManagerImplementacion();
+        zonaManager = new ZonaManagerImplementation();
         ObservableList zonas = FXCollections.observableArrayList(zonaManager.getAllZonas());
         colZona.setCellFactory(ComboBoxTableCell.forTableColumn(zonas));
     }

@@ -16,7 +16,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 
 
- * Clase para poder utilizar un DatePicker dentro de una tabla.
+ /** Clase para poder utilizar un DatePicker dentro de una tabla.
  *
  * @author Alain Cosgaya
  */

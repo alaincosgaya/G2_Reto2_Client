@@ -6,6 +6,8 @@
 package factoria;
 
 import clases.GranjaEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import interfaces.GranjaInterface;
 import java.util.Collection;
 import java.util.Date;
@@ -31,7 +33,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public Collection<GranjaEntity> getAllGranjas() {
+    public Collection<GranjaEntity> getAllGranjas() throws ClienteServidorConexionException, BDServidorException{
         List<GranjaEntity> granjas = null;
         granjas = webClient.findAll(new GenericType<List<GranjaEntity>>() {
         });
@@ -39,7 +41,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public GranjaEntity getGranja(String idGranja) {
+    public GranjaEntity getGranja(String idGranja) throws ClienteServidorConexionException, BDServidorException{
         GranjaEntity granja = null;
         granja = webClient.find(new GenericType<GranjaEntity>() {
         }, idGranja);
@@ -47,7 +49,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public GranjaEntity getGranjaPorNombre(String nombreGranja) {
+    public GranjaEntity getGranjaPorNombre(String nombreGranja) throws ClienteServidorConexionException, BDServidorException{
         GranjaEntity granja = null;
         granja = webClient.granjaPorNombre(new GenericType<GranjaEntity>() {
         }, nombreGranja);
@@ -55,7 +57,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public GranjaEntity getGranjaPorzona(String idZona) {
+    public GranjaEntity getGranjaPorzona(String idZona) throws ClienteServidorConexionException, BDServidorException{
         GranjaEntity granja = null;
         granja = webClient.granjaALaQuePerteneceEsazona(new GenericType<GranjaEntity>() {
         }, idZona);
@@ -63,7 +65,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public Collection<GranjaEntity> getGranjasPorGranjero(String username) {
+    public Collection<GranjaEntity> getGranjasPorGranjero(String username) throws ClienteServidorConexionException, BDServidorException{
         List<GranjaEntity> granjas = null;
         granjas = webClient.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
         }, username);
@@ -71,7 +73,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public Collection<GranjaEntity> getGranjasPorTrabajador(String username) {
+    public Collection<GranjaEntity> getGranjasPorTrabajador(String username) throws ClienteServidorConexionException, BDServidorException{
         List<GranjaEntity> granjas = null;
         granjas = webClient.granjasPorLoginDelGranjero(new GenericType<List<GranjaEntity>>() {
         }, username);
@@ -79,7 +81,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public GranjaEntity cambiarNombreDeLaGranja(Long idGranja, String nombreGranja) {
+    public GranjaEntity cambiarNombreDeLaGranja(Long idGranja, String nombreGranja) throws ClienteServidorConexionException, BDServidorException{
         GranjaEntity granja = null;
         granja = webClient.updateNombreDeLaGranja(new GenericType<GranjaEntity>() {
         }, idGranja, nombreGranja);
@@ -87,7 +89,7 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
     
     @Override
-    public GranjaEntity cambiarFechaCreacionDeLaGranja(Long idGranja, Date fechaCreacion) {
+    public GranjaEntity cambiarFechaCreacionDeLaGranja(Long idGranja, Date fechaCreacion) throws ClienteServidorConexionException, BDServidorException{
         GranjaEntity granja = null;
         granja = webClient.updateFechaCreacionDeLaGranja(new GenericType<GranjaEntity>() {
         }, idGranja, fechaCreacion);
@@ -95,12 +97,12 @@ public class GranjaManagerImplementation implements GranjaInterface {
     }
 
     @Override
-    public void editarGranja(GranjaEntity granja) {
+    public void editarGranja(GranjaEntity granja) throws ClienteServidorConexionException, BDServidorException{
         webClient.edit(granja, granja.getIdGranja());    
     }
 
     @Override
-    public void borrarGranja(String idGranja) {
+    public void borrarGranja(String idGranja) throws ClienteServidorConexionException, BDServidorException{
         webClient.deleteGranja(idGranja);
     }
 

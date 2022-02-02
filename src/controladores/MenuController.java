@@ -33,7 +33,7 @@ public class MenuController {
 
     private static final Logger LOGGER = Logger.getLogger(MenuController.class.getName());
 
-    private Stage stage;
+    private Stage stage = new Stage();
     @FXML
     private HBox hBoxMenu;
     @FXML
@@ -95,7 +95,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
@@ -118,7 +118,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
@@ -141,10 +141,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
-            //stage.getScene().getWindow().onHidingProperty();
-            //stage.getScene().getWindow().onShowingProperty();
-            
+            hBoxMenu.getScene().getWindow().hide();
             
             
         } catch (IOException e) {
@@ -168,7 +165,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
@@ -191,7 +188,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
@@ -214,7 +211,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
@@ -243,7 +240,7 @@ public class MenuController {
             controller.setStage(stage);
             controller.initStage(root);
 
-            //stage.getScene().getWindow().hide();
+            hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }

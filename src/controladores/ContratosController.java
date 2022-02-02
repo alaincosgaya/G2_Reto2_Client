@@ -67,19 +67,19 @@ import restful.UserClient;
  * @author Alain Cosgaya
  */
 public class ContratosController {
-
+    
     private static final Logger LOGGER = Logger.getLogger(ContratosController.class.getName());
-
+    
     private Stage stage;
     /**
      * Implementaciones que va a utilizar.
      */
     private ContratoInterface contratoManager;
-
+    
     private TrabajadorInterface trabajadorManager;
-
+    
     private GranjaInterface granjaManager;
-
+    
     private ZonaInterface zonaManager;
 
     /**
@@ -112,22 +112,23 @@ public class ContratosController {
     /**
      * Atributos a utilizar.
      */
-
+    
     private ObservableList<ContratoEntity> contratos;
-
+    
     private ObservableList granjas;
-
+    
     private ObservableList trabajadores;
-
+    
     private ContratoEntity contratoInsert;
-
+    
     private ContratoId idContrato;
-
+    
     private boolean contratar;
-
+    
     private ObservableList opciones;
-
+    
     private String idBusqueda;
+    private UserEntity user;
 
     /**
      * El metodo que indica el stage.
@@ -136,6 +137,10 @@ public class ContratosController {
      */
     public void setStage(Stage stage1) {
         stage = stage1;
+    }
+    
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     /**
@@ -147,10 +152,10 @@ public class ContratosController {
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage.setResizable(false);
-
+        
         stage.setTitle("Contratos");
         stage.setScene(scene);
-        LOGGER.log(Level.INFO,"Llamada a los metodos y restricciones del controlador");
+        LOGGER.log(Level.INFO, "Llamada a los metodos y restricciones del controlador");
         contratar = false;
         // Uso de factorias para recuperar implementaciones.
         contratoManager = getContratoManagerImplementation();
@@ -162,7 +167,7 @@ public class ContratosController {
         // Vincular columnas con el valor correspondiente.
         colTrabajador.setCellValueFactory(new PropertyValueFactory<>("trabajador"));
         colGranja.setCellValueFactory(new PropertyValueFactory<>("granja"));
-
+        
         colFechaCon.setCellValueFactory(new PropertyValueFactory<>("fechaContratacion"));
         colSalario.setCellValueFactory(new PropertyValueFactory<>("salario"));
         colSalario.setCellFactory(TextFieldTableCell.forTableColumn(new LongStringConverter()));
@@ -182,7 +187,7 @@ public class ContratosController {
             @Override
             public TableCell call(TableColumn p) {
                 DateEditingCell dateEdit = new DateEditingCell();
-
+                
                 return dateEdit;
             }
         });
@@ -204,7 +209,7 @@ public class ContratosController {
         colTrabajador.setOnEditCancel(this::cancelarEdicion);
         colGranja.setOnEditCancel(this::cancelarEdicion);
         colFechaCon.setOnEditCancel(this::cancelarEdicion);
-
+        
         colFechaCon.setEditable(false);
 
         // Control de seleccion de fila
@@ -217,9 +222,10 @@ public class ContratosController {
                 btnDespedir.setDisable(true);
             }
         });
-
+        tipoUsuario(user);
+        
         stage.show();
-
+        
     }
 
     /**
@@ -235,7 +241,7 @@ public class ContratosController {
         if (newValue != null) {
             try {
                 String filtro = cBoxFiltro.getValue();
-
+                
                 btnBuscar.setDisable(true);
                 cBoxOpcion.setDisable(false);
                 cBoxOpcion.setItems(null);
@@ -262,7 +268,7 @@ public class ContratosController {
                         + " no se han podido cargar las opciones de filtrado. En el caso de "
                         + "que este error persista, contacte con el soporte tecnico.");
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
-
+                
             } catch (BDServidorException ex) {
                 alertErrores("Debido a un problema del servidor,"
                         + " no se han podido cargar las opciones de filtrado. En el caso de "
@@ -280,11 +286,11 @@ public class ContratosController {
     public void cargarDatosFiltrado(Collection lista) {
         LOGGER.log(Level.INFO, "Cargando datos en la combobox de opciones");
         opciones = FXCollections.observableArrayList(lista);
-
+        
         cBoxOpcion.setItems(opciones);
         // Deja seleccionado la primera opcion.
         cBoxOpcion.getSelectionModel().selectFirst();
-
+        
     }
 
     /**
@@ -298,7 +304,7 @@ public class ContratosController {
     @FXML
     public void handleOpcionSeleccionada(Observable ov) {
         LOGGER.info("Opcion seleccionada");
-
+        
         if (((ObservableValue) ov).getValue() != null) {
             btnBuscar.setDisable(false);
             cBoxOpcion.setValue(cBoxOpcion.getSelectionModel().getSelectedItem());
@@ -312,7 +318,7 @@ public class ContratosController {
                     break;
             }
             LOGGER.log(Level.INFO, "Id del objeto seleccionado: {0}", idBusqueda);
-
+            
         }
     }
 
@@ -325,7 +331,7 @@ public class ContratosController {
     public void btnBuscarContratos(ActionEvent event) {
         LOGGER.log(Level.INFO, "Boton de busqueda de contratos pulsado.");
         buscarContratos();
-
+        
     }
 
     /**
@@ -336,7 +342,7 @@ public class ContratosController {
     public void cargarDatos(Collection<ContratoEntity> contratosList) {
         LOGGER.log(Level.INFO, "Cargando datos en la tabla");
         contratos = FXCollections.observableArrayList(contratosList);
-
+        
         tablaContratos.setItems(contratos);
         cBoxOpcion.getSelectionModel().clearSelection();
         btnBuscar.setDisable(true);
@@ -349,19 +355,20 @@ public class ContratosController {
      */
     @FXML
     public void contratarTrabajador(ActionEvent event) {
-
+        
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/ContratarTrabajador.fxml"));
             // Se carga el FXML de Session
             Parent root;
-
+            
             root = (Parent) loader.load();
-
+            
             LOGGER.info("Llamada al controlador del FXML");
             // Se recoge el controlador del FXML
             ContratarTrabajadorController controller = ((ContratarTrabajadorController) loader.getController());
             controller.setStage(stage);
             LOGGER.info("Inicio del stage de Session");
+            controller.setUser(user);
             controller.initStage(root);
 
             //  paneVentana.getScene().getWindow().hide();
@@ -387,7 +394,7 @@ public class ContratosController {
         if (!ButtonType.OK.equals(close.get())) {
             event.consume();
         }
-
+        
     }
 
     /**
@@ -414,13 +421,13 @@ public class ContratosController {
             // Cargaria los datos en las columnas de trabajadores y granjas.
             cargarTrabajadoresColumn();
             cargarGranjasColumn();
-
+            
             tablaContratos.getItems().add(new ContratoEntity());
             tablaContratos.getSelectionModel().selectLast();
             tablaContratos.layout();
             tablaContratos.edit(tablaContratos.getSelectionModel().getSelectedIndex(), colTrabajador);
         } else {
-            try {     
+            try {
                 // Deshabilitaria la edicion de campos y ejecutaria el metodo de contratar.
                 LOGGER.log(Level.INFO, "Creacion de contrato en base a los datos");
                 contratar = false;
@@ -436,13 +443,13 @@ public class ContratosController {
                         + " no se ha podido crear el contrato. En el caso de "
                         + "que este error persista, contacte con el soporte tecnico.");
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
-
+                
             } catch (BDServidorException ex) {
                 alertErrores("Debido a un problema del servidor,"
                         + " no se ha podido crear el contrato. En el caso de "
                         + "que este error persista, contacte con el soporte tecnico.");
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
-
+                
             }
         }
     }
@@ -483,7 +490,7 @@ public class ContratosController {
             LOGGER.log(Level.INFO, "Guardando salario del contrato");
             contratoInsert.setSalario((Long) ((TableColumn.CellEditEvent) event).getNewValue());
         }
-
+        
     }
 
     /**
@@ -529,7 +536,7 @@ public class ContratosController {
                     LOGGER.log(Level.WARNING, "Despido no completado, zonas por desasignar");
                 }
             }
-
+            
         } catch (ClienteServidorConexionException ex) {
             alertErrores("Debido a un problema al conectarse al servidor,"
                     + " no se ha podido realizar el despido. En el caso de "
@@ -548,7 +555,7 @@ public class ContratosController {
      * la tabla.
      */
     public void cargarTrabajadoresColumn() {
-
+        
         try {
             LOGGER.log(Level.INFO, "Cargando datos en columna de trabajador.");
             trabajadores = FXCollections.observableArrayList(getTrabajadorManagerImplementation().getAllTrabajadores());
@@ -564,7 +571,7 @@ public class ContratosController {
                     + "que este error persista, contacte con el soporte tecnico.");
             Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
 
     /**
@@ -574,9 +581,9 @@ public class ContratosController {
     public void cargarGranjasColumn() {
         try {
             LOGGER.log(Level.INFO, "Cargando datos en columna de granjas");
-            granjas = FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero("g1"));
+            granjas = FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero(user.getUsername()));
             colGranja.setCellFactory(ComboBoxTableCell.forTableColumn(granjas));
-
+            
         } catch (ClienteServidorConexionException ex) {
             alertErrores("Debido a un problema al conectarse al servidor,"
                     + " no se han podido cargar las granjas. En el caso de "
@@ -588,7 +595,7 @@ public class ContratosController {
                     + "que este error persista, contacte con el soporte tecnico.");
             Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
     }
 
     /**
@@ -600,7 +607,7 @@ public class ContratosController {
         LOGGER.log(Level.INFO, "Guardando trabajador para el contrato.");
         contratoInsert.setTrabajador((TrabajadorEntity) ((TableColumn.CellEditEvent) event).getNewValue());
         idContrato.setTrabajadorId(((TrabajadorEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getId());
-
+        
     }
 
     /**
@@ -612,7 +619,7 @@ public class ContratosController {
         LOGGER.log(Level.INFO, "Guardando granja para el contrato");
         contratoInsert.setGranja((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue());
         idContrato.setTrabajadorId(((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getIdGranja());
-
+        
     }
 
     /**
@@ -623,7 +630,7 @@ public class ContratosController {
     public void guardarFecha(Event event) {
         LOGGER.log(Level.INFO, "Guardando nueva fecha de contratacion.");
         contratoInsert.setFechaContratacion((Date) ((TableColumn.CellEditEvent) event).getNewValue());
-
+        
     }
 
     /**
@@ -637,9 +644,9 @@ public class ContratosController {
         colFechaCon.setEditable(false);
         colTrabajador.setEditable(false);
         colGranja.setEditable(false);
-
+        
         tablaContratos.refresh();
-
+        
     }
 
     /**
@@ -648,12 +655,12 @@ public class ContratosController {
      */
     private void buscarContratos() {
         Collection<ContratoEntity> contratos = null;
-        LOGGER.log(Level.INFO,"Comprobando si se ha seleccionado algun tipo de filtro."); 
-                
+        LOGGER.log(Level.INFO, "Comprobando si se ha seleccionado algun tipo de filtro.");        
+        
         if (!cBoxFiltro.getSelectionModel().isEmpty()) {
             try {
                 LOGGER.log(Level.INFO, "Realizando busqueda de contratos.");
-
+                
                 switch (cBoxFiltro.getValue()) {
                     case ("Trabajador"):
                         // Recupera los contratos del trabajador.
@@ -664,14 +671,14 @@ public class ContratosController {
                         // Recupera los contratos de la granja.
 
                         contratos = contratoManager.getContratosGranja(idBusqueda);
-
+                        
                         break;
                     case ("Todos"):
                         // Recupera todos los contratos.
                         contratos = contratoManager.getAllContratos();
                         // contratos = contratoManager.getContratosGranjero("2");
                         break;
-
+                    
                 }
                 cargarDatos(contratos);
             } catch (ClienteServidorConexionException ex) {
@@ -686,7 +693,7 @@ public class ContratosController {
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+        
     }
 
     /**
@@ -756,5 +763,5 @@ public class ContratosController {
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
         alert.showAndWait();
     }
-
+    
 }

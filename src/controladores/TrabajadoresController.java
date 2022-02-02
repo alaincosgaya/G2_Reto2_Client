@@ -2,6 +2,7 @@ package controladores;
 
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
+import clases.UserEntity;
 import clases.ZonaEntity;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
@@ -88,6 +89,12 @@ public class TrabajadoresController {
 
     private ZonaEntity zonaSeleccionada;
 
+    private UserEntity usr;
+
+    public void setUser(UserEntity user) {
+        this.usr = user;
+    }
+
     /**
      * El metodo que indica el stage.
      *
@@ -170,7 +177,7 @@ public class TrabajadoresController {
 
             try {
                 String filtro = cBoxFiltro.getValue();
-                
+
                 GranjaClient webClientGranja = new GranjaClient();
                 btnBuscar.setDisable(true);
                 cBoxOpcion.setDisable(false);
@@ -178,17 +185,17 @@ public class TrabajadoresController {
                 Collection lista;
                 switch (filtro) {
                     case ("Contratados"):
-                        
+
                         // En proceso
                         lista = granjaManager.getAllGranjas();
                         cargarDatosFiltrado(lista);
                         break;
                     case ("Contratables"):
-                        
+
                         lista = granjaManager.getAllGranjas();
                         cargarDatosFiltrado(lista);
                         break;
-                        
+
                     case ("Zona"):
                         lista = zonaManager.getAllZonas();
                         cargarDatosFiltrado(lista);
@@ -197,7 +204,7 @@ public class TrabajadoresController {
                         btnBuscar.setDisable(false);
                         cBoxOpcion.setDisable(true);
                         break;
-                        
+
                 }
             } catch (ClienteServidorConexionException ex) {
                 Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
@@ -360,12 +367,12 @@ public class TrabajadoresController {
             } else {
                 trabajadores = getTrabajadorManagerImplementation().getAllTrabajadores();
             }
-        
-        tablaTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
-        cBoxFiltro.setDisable(true);
-        cBoxOpcion.setDisable(true);
-        btnBuscar.setDisable(true);
-        btnContratar.setVisible(false);
+
+            tablaTrabajador.setItems(FXCollections.observableArrayList(trabajadores));
+            cBoxFiltro.setDisable(true);
+            cBoxOpcion.setDisable(true);
+            btnBuscar.setDisable(true);
+            btnContratar.setVisible(false);
         } catch (ClienteServidorConexionException ex) {
             Logger.getLogger(TrabajadoresController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (BDServidorException ex) {

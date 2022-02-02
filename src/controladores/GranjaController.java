@@ -123,6 +123,7 @@ public class GranjaController {
     private boolean nueva;
 
     private String user;
+    private UserEntity usr;
 
     /**
      * El metodo que indica el stage.
@@ -131,6 +132,10 @@ public class GranjaController {
      */
     public void setStage(Stage stage1) {
         stage = stage1;
+    }
+
+    public void setUser(UserEntity user) {
+        this.usr = user;
     }
 
     /**
@@ -184,6 +189,7 @@ public class GranjaController {
         } catch (BDServidorException ex) {
             Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        tipoUsuario(usr);
         nueva = false;
         stage.show();
     }
@@ -205,18 +211,17 @@ public class GranjaController {
             comboBoxTipoElegido.setItems(null);
             Collection listadoGranjas = null;
             switch (filtrado) {
-                case ("Nombre"):
-            {
-                try {
-                    listadoGranjas = granjaInterface.getAllGranjas();
-                } catch (ClienteServidorConexionException ex) {
-                    Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (BDServidorException ex) {
-                    Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+                case ("Nombre"): {
+                    try {
+                        listadoGranjas = granjaInterface.getAllGranjas();
+                    } catch (ClienteServidorConexionException ex) {
+                        Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BDServidorException ex) {
+                        Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-            }
-                    cargarDatosTipo(listadoGranjas);
-                    break;
+                cargarDatosTipo(listadoGranjas);
+                break;
                 case ("Granjero"):
                     listadoGranjas = granjeroInterface.getAllGranjeros();
                     cargarDatosTipo(listadoGranjas);
@@ -357,10 +362,10 @@ public class GranjaController {
             Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
-     * Este metodo valida que al pulsar el botón Informe, se cree un informa 
-     * con todos los datos de als granjas 
+     * Este metodo valida que al pulsar el botón Informe, se cree un informa con
+     * todos los datos de als granjas
      *
      * @param event
      */
@@ -604,6 +609,36 @@ public class GranjaController {
             btnCreate.setVisible(false);
             btnDelete.setVisible(false);
             tableViewGranja.setEditable(false);
+        }
+    }
+
+    public void tipoUsuario(UserEntity user) {
+
+        LOGGER.log(Level.INFO, "Ajustando permisos de acceso en base al usuario.");
+        if (user.getUserPrivilege().equals(UserPrivilegeType.TRABAJADOR)) {
+            try {
+                LOGGER.log(Level.INFO, "Usuario de tipo Trabajador");
+                btnCreate.setVisible(false);
+                btnDelete.setVisible(false);
+
+                tableViewGranja.setEditable(false);
+                tableViewGranja.setItems(FXCollections.observableArrayList(
+                        granjaInterface.getGranjasPorTrabajador(usr.getUsername())));
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                LOGGER.log(Level.INFO, "Usuario de tipo Granjero");
+                tableViewGranja.setItems(FXCollections.observableArrayList(
+                        granjaInterface.getGranjasPorGranjero(usr.getUsername())));
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

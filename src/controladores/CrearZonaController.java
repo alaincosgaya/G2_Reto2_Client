@@ -7,6 +7,7 @@ package controladores;
 
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
+import clases.UserEntity;
 import clases.ZonaEntity;
 import controladores.*;
 import excepciones.BDServidorException;
@@ -71,12 +72,18 @@ public class CrearZonaController {
     GranjaInterface granjaManager = new GranjaManagerImplementation();
 
     private Stage stage;
+    private UserEntity usr;
+    
+    public void setUser(UserEntity user){
+        this.usr = user;
+    }
 
     /**
      * El metodo que indica el stage.
      *
      * @param stage1
      */
+
     public void setStage(Stage stage1) {
         stage = stage1;
     }
@@ -87,8 +94,8 @@ public class CrearZonaController {
             stage.setTitle("Crear Zona");
             stage.setScene(new Scene(root));
             
-            //inicializamos las combos con los datos pertinentes
-            ObservableList<GranjaEntity> listaGranja = FXCollections.observableArrayList(granjaManager.getAllGranjas());
+            //inicializamos las combos con los datos pertinentes 
+            ObservableList<GranjaEntity> listaGranja = FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero(usr.getUsername()));
             comboSeleccionarGranja.setItems(listaGranja);
             dateFechaNacimiento.setValue(LocalDate.now());
             validarDatos();
@@ -145,7 +152,7 @@ public class CrearZonaController {
         if (!trabajadoresAsignar.isEmpty()) {
             trabajadoresAsignar.stream().forEach((trabajador) -> {
 
-                zonaManager.asignarTrabajador(trabajador.getUsername(), 7L);
+                zonaManager.asignarTrabajador(trabajador.getUsername(),7L);
             });
         }
         buttonEventBack(event);

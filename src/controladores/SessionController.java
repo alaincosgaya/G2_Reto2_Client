@@ -35,20 +35,28 @@ public class SessionController implements Initializable {
     private BorderPane bPane;
     private Stage stage;
     private static final Logger LOGGER = Logger.getLogger(App.class.getName());
-    private UserEntity user;
+    private static UserEntity usr;
 
+    
+    public static UserEntity getUser(){
+        return usr;
+    }
+    public void setUser(UserEntity user){
+        usr = user;
+    }
+    
     public void setStage(Stage stage1) {
         stage = stage1;
     }
 
-    public void initStage(Parent root, UserEntity user) {
+    public void initStage(Parent root) {
         Scene scene = new Scene(root);
         stage.setResizable(false);
         stage.setTitle("Session");
         stage.setScene(scene);
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
         stage.show();
-        this.user = user;
+       
     }
 
     @FXML
@@ -62,7 +70,7 @@ public class SessionController implements Initializable {
             cambiarconController controller = ((cambiarconController) loader.getController());
             Stage anotherStage = new Stage();
             controller.setStage(anotherStage);
-            controller.initStage(root, user);
+            controller.initStage(root, usr);
 
         } catch (IOException e) {
             e.printStackTrace();

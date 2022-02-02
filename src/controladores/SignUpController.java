@@ -161,7 +161,8 @@ public class SignUpController implements Initializable {
             LOGGER.info("Llamada al controlador del FXML");
             SessionController controller = ((SessionController) loader.getController());
             controller.setStage(stage);
-            controller.initStage(root, user);
+            controller.setUser(user);
+            controller.initStage(root);
 
             ((Node) (event.getSource())).getScene().getWindow().hide();
 

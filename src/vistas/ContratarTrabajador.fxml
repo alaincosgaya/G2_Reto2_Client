@@ -18,73 +18,76 @@
 <BorderPane fx:id="paneSignUp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="360.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controladores.ContratarTrabajadorController">
    
     <top>
-      <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" BorderPane.alignment="CENTER">
+        <Pane prefHeight="38.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" BorderPane.alignment="CENTER">
          
-          <children>
+            <children>
            
             
-            <Label layoutX="41.0" layoutY="11.0" prefHeight="17.0" prefWidth="86.0" text="Lauserri" />
-         </children>
+                <Label layoutX="41.0" layoutY="11.0" prefHeight="17.0" prefWidth="86.0" text="Lauserri" />
+            </children>
       
-      </Pane>
-   </top>
-   <bottom>
-      <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
-          
-         <children>
-            <Label layoutX="51.0" layoutY="40.0" styleClass="header" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Contratar trabajador" />
+        </Pane>
+    </top>
+    <bottom>
+        <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+            <children>
+                <fx:include fx:id="hBoxMenu" source="Menu.fxml" />
+            </children>
+            <children>
+                <Label layoutX="51.0" layoutY="40.0" styleClass="header" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Contratar trabajador" />
             
-            <Label layoutX="152.0" layoutY="91.0" prefHeight="27.0" prefWidth="80.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Trabajador" />
+                <Label layoutX="152.0" layoutY="91.0" prefHeight="27.0" prefWidth="80.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Trabajador" />
             
-            <Label layoutX="149.0" layoutY="133.0" prefHeight="27.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Granja" />
+                <Label layoutX="149.0" layoutY="133.0" prefHeight="27.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Granja" />
             
-            <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="152.0" layoutY="268.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Atrás" />
+                <Button fx:id="btnAtras" cancelButton="true" focusTraversable="false" layoutX="152.0" layoutY="268.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Atrás" />
             
-            <Separator layoutX="51.0" layoutY="78.0" prefHeight="1.0" prefWidth="495.0" />
+                <Separator layoutX="51.0" layoutY="78.0" prefHeight="1.0" prefWidth="495.0" />
             
-            <Label layoutX="151.0" layoutY="173.0" prefHeight="27.0" prefWidth="111.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Fecha Contratacion" />
+                <Label layoutX="151.0" layoutY="173.0" prefHeight="27.0" prefWidth="111.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Fecha Contratacion" />
             
-            <Button fx:id="btnContratar" defaultButton="true" disable="true" focusTraversable="false" layoutX="352.0" layoutY="268.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Contratar" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Button>
+                <Button fx:id="btnContratar" defaultButton="true" disable="true" focusTraversable="false" layoutX="352.0" layoutY="268.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="109.0" style="-fx-background-color: #a7c957;" styleClass="btn" text="Contratar" textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
             
-            <Label layoutX="149.0" layoutY="209.0" prefHeight="25.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Salario" />
-            <ComboBox fx:id="cBoxTrabajador" layoutX="306.0" layoutY="91.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-            <ComboBox fx:id="cBoxGranja" layoutX="306.0" layoutY="133.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-            <MenuBar layoutY="1.0" prefHeight="26.0" prefWidth="640.0" style="-fx-background-color: white;">
-              <menus>
-                <Menu mnemonicParsing="false" text="Inicio">
-                  <items>
-                        <MenuItem mnemonicParsing="false" text="Granja" />
-                        <MenuItem mnemonicParsing="false" text="Zona" />
-                        <MenuItem mnemonicParsing="false" text="Animal" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Trabajador">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Contratos" />
-                        <MenuItem mnemonicParsing="false" text="Trabajadores" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Perfil">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Perfil" />
-                  </items>
-                </Menu>
-                  <Menu mnemonicParsing="false" text="Salir">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
-                        <MenuItem mnemonicParsing="false" text="Salir" />
-                    </items>
-                  </Menu>
-              </menus>
-            </MenuBar>
-            <DatePicker fx:id="datePickerContrato" layoutX="305.0" layoutY="173.0" prefHeight="25.0" prefWidth="152.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-            <TextField fx:id="txtSalario" layoutX="305.0" layoutY="209.0" prefHeight="25.0" prefWidth="153.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
-         </children>
+                <Label layoutX="149.0" layoutY="209.0" prefHeight="25.0" prefWidth="68.0" styleClass="txt" stylesheets="@../../Reto1v1/Reto1v3/src/view/fxml.css" text="Salario" />
+                <ComboBox fx:id="cBoxTrabajador" layoutX="306.0" layoutY="91.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <ComboBox fx:id="cBoxGranja" layoutX="306.0" layoutY="133.0" prefWidth="150.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <MenuBar layoutY="1.0" prefHeight="26.0" prefWidth="640.0" style="-fx-background-color: white;">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="Inicio">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Granja" />
+                                <MenuItem mnemonicParsing="false" text="Zona" />
+                                <MenuItem mnemonicParsing="false" text="Animal" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Trabajador">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Contratos" />
+                                <MenuItem mnemonicParsing="false" text="Trabajadores" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Perfil">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Perfil" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Salir">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
+                                <MenuItem mnemonicParsing="false" text="Salir" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <DatePicker fx:id="datePickerContrato" layoutX="305.0" layoutY="173.0" prefHeight="25.0" prefWidth="152.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+                <TextField fx:id="txtSalario" layoutX="305.0" layoutY="209.0" prefHeight="25.0" prefWidth="153.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" />
+            </children>
          
-      </Pane>
-   </bottom>
+        </Pane>
+    </bottom>
    
 </BorderPane>

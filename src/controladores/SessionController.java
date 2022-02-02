@@ -55,9 +55,6 @@ public class SessionController implements Initializable {
     private void buttonEventCambiar(ActionEvent event) throws IOException {
 
         try {
-            
-            
-            
             LOGGER.info("Carga del FXML de SignIn");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/cambiarcon.fxml"));
             Parent root = (Parent) loader.load();

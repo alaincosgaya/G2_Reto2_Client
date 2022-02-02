@@ -6,6 +6,7 @@
 package restful;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -28,7 +29,8 @@ public class GranjaClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/Lauserri/webresources";
+    private static final String BASE_URI = ResourceBundle.getBundle("archivos.config")
+            .getString("restfulURI");
 
     public GranjaClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();

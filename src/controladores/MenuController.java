@@ -5,6 +5,7 @@
  */
 package controladores;
 
+import clases.UserEntity;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -81,7 +82,7 @@ public class MenuController {
     
     @FXML
     private void menuGranja(ActionEvent event) {
-        /*
+        
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
@@ -99,16 +100,16 @@ public class MenuController {
         } catch (IOException e) {
 
         }
-        */
+        
     }
 
     @FXML
     private void menuZona(ActionEvent event) {
-        /*
+        
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/vistas/Zona.fxml")
+                    "/vistas/VentanaZona.fxml")
             );
 
             Parent root = (Parent) loader.load();
@@ -122,7 +123,7 @@ public class MenuController {
         } catch (IOException e) {
 
         }
-        */
+        
     }
 
     @FXML
@@ -151,7 +152,7 @@ public class MenuController {
 
     @FXML
     private void menuContratos(ActionEvent event) {
-        /*
+        
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
@@ -169,21 +170,21 @@ public class MenuController {
         } catch (IOException e) {
 
         }
-        */
+        
     }
 
     @FXML
     private void menuTrabajadores(ActionEvent event) {
-        /*
+        
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/vistas/Trabajador.fxml")
+                    "/vistas/Trabajadores.fxml")
             );
 
             Parent root = (Parent) loader.load();
             LOGGER.info("Llamada al controlador del FXML");
-            TrabajadorController controller = ((TrabajadorController) loader.getController());
+            TrabajadoresController controller = ((TrabajadoresController) loader.getController());
 
             controller.setStage(stage);
             controller.initStage(root);
@@ -192,12 +193,12 @@ public class MenuController {
         } catch (IOException e) {
 
         }
-        */
+        
     }
 
     @FXML
     private void menuPerfil(ActionEvent event) {
-        /*
+        UserEntity user = null;
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
@@ -209,13 +210,13 @@ public class MenuController {
             SessionController controller = ((SessionController) loader.getController());
 
             controller.setStage(stage);
-            controller.initStage(root);
+            controller.initStage(root, user);
 
             hBoxMenu.getScene().getWindow().hide();
         } catch (IOException e) {
 
         }
-        */
+        
     }
 
     @FXML
@@ -226,7 +227,7 @@ public class MenuController {
 
     @FXML
     private void sesionMenu(ActionEvent event) {
-        /*
+        
         try {
             LOGGER.info("Carga del FXML de Principal Animal");
             FXMLLoader loader = new FXMLLoader(getClass().getResource(
@@ -244,12 +245,7 @@ public class MenuController {
         } catch (IOException e) {
 
         }
-        */
+        
     }
-    /*
-    private void closeAll(ActionEvent event){
-        Platform.setImplicitExit(false);
-        ((Node)(event.getSource())).getScene.getWindow().hide();
-    }
-*/
+    
 }

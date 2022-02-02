@@ -15,7 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 
-/**
+
  * Clase para poder utilizar un DatePicker dentro de una tabla.
  *
  * @author Alain Cosgaya
@@ -31,6 +31,7 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
     /**
      * Control para cuando se inicia la edicion.
      */
+
     @Override
     public void startEdit() {
         if (!isEmpty()) {
@@ -44,6 +45,7 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
     /**
      * Control para cuando se cancela la edicion.
      */
+
     @Override
     public void cancelEdit() {
         super.cancelEdit();
@@ -80,6 +82,7 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
         }
     }
 
+
     /**
      * Metodo para la creacion de un DatePicker.
      */
@@ -87,8 +90,8 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
         datePicker = new DatePicker(getDate());
         datePicker.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         datePicker.setOnAction((e) -> {
-
-            commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            
+            commitEdit(Date.from(datePicker.getValue().atStartOfDay(ZoneId.of("GMT")).toInstant()));
 
         });
     }
@@ -97,8 +100,10 @@ public class DateEditingCell extends TableCell<ContratoEntity, Date> {
      * Metodo para le recuperacion de fecha.
      * @return Devuelve la fecha actual. 
      */
+
     private LocalDate getDate() {
         return LocalDate.now();
     }
 
 }
+

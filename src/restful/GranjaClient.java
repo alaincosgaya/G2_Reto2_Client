@@ -22,13 +22,13 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author Alejandro Gomez
+ * @author Alejandro
  */
 public class GranjaClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:30485/2DAMG2_SERVER/webresources";
+    private static final String BASE_URI = "http://localhost:8080/Lauserri/webresources";
 
     public GranjaClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -56,7 +56,7 @@ public class GranjaClient {
         resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
-    
+
     public <T> T findAll(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

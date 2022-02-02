@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public interface GranjaInterface {
     
-    public void crearGranja(GranjaEntity granja);
+    public void crearGranja(GranjaEntity granja)throws ClienteServidorConexionException, BDServidorException;
     
     public Collection<GranjaEntity> getAllGranjas()throws ClienteServidorConexionException, BDServidorException;
     
@@ -30,6 +30,8 @@ public interface GranjaInterface {
     public Collection<GranjaEntity> getGranjasPorGranjero(String username)throws ClienteServidorConexionException, BDServidorException;
     
     public Collection<GranjaEntity> getGranjasPorTrabajador(String username)throws ClienteServidorConexionException, BDServidorException;
+    
+    public Collection<GranjaEntity> getGranjasNoTrabajador(String username)throws ClienteServidorConexionException, BDServidorException;
     
     public GranjaEntity cambiarNombreDeLaGranja(Long idGranja, String nombreGranja)throws ClienteServidorConexionException, BDServidorException;
     

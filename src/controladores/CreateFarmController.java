@@ -9,6 +9,8 @@ import excepciones.NameLetterException;
 import factoria.GranjeroManagerImplementation;
 import clases.GranjaEntity;
 import clases.GranjeroEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import restful.GranjeroClient;
 import factoria.GranjaManagerImplementation;
 import interfaces.GranjaInterface;
@@ -143,34 +145,20 @@ public class CreateFarmController {
      */
     @FXML
     private void buttonEventCreateFarm(ActionEvent event) {
-        LOGGER.info("Inicializacion de la variable granja");
-        GranjaEntity granja;
-        granja = granjaInterface.getGranjaPorNombre(txtName.getText());
-        if (granja != null) {
-            LOGGER.severe("Este nombre ya pertenece a una granja");
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Este nombre ya pertenece a una granja");
-            alert.show();
-        } else {
-            granja = new GranjaEntity();
-            granja.setNombreGranja(txtName.getText());
-            granja.setGranjero((GranjeroEntity) comboBoxFarmer.getSelectionModel().getSelectedItem());
-            if (datePickerCreate.getValue() == null) {
-                datePickerCreate.setValue(LocalDate.now());
-                granja.setFechaCreacion(Date.valueOf(datePickerCreate.getValue()));
-                granjaInterface.crearGranja(granja);
-                txtName.clear();
-                datePickerCreate.setValue(null);
-                comboBoxFarmer.getSelectionModel().clearSelection();
-                LOGGER.info("Registro de la granja exitoso");
-                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Granja registrada correctamente");
+        try {
+            LOGGER.info("Inicializacion de la variable granja");
+            GranjaEntity granja;
+            granja = granjaInterface.getGranjaPorNombre(txtName.getText());
+            if (granja != null) {
+                LOGGER.severe("Este nombre ya pertenece a una granja");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Este nombre ya pertenece a una granja");
                 alert.show();
             } else {
-                if (datePickerCreate.getValue().isAfter(LocalDate.now())) {
-                    LOGGER.severe("No puede introducir una granja la cual su fecha de creacion sea posterior al dia de hoy");
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "No puede introducir una granja la cual su fecha de creacion sea posterior al dia de hoy");
-                    alert.show();
-                } else {
-
+                granja = new GranjaEntity();
+                granja.setNombreGranja(txtName.getText());
+                granja.setGranjero((GranjeroEntity) comboBoxFarmer.getSelectionModel().getSelectedItem());
+                if (datePickerCreate.getValue() == null) {
+                    datePickerCreate.setValue(LocalDate.now());
                     granja.setFechaCreacion(Date.valueOf(datePickerCreate.getValue()));
                     granjaInterface.crearGranja(granja);
                     txtName.clear();
@@ -179,9 +167,29 @@ public class CreateFarmController {
                     LOGGER.info("Registro de la granja exitoso");
                     Alert alert = new Alert(Alert.AlertType.INFORMATION, "Granja registrada correctamente");
                     alert.show();
+                } else {
+                    if (datePickerCreate.getValue().isAfter(LocalDate.now())) {
+                        LOGGER.severe("No puede introducir una granja la cual su fecha de creacion sea posterior al dia de hoy");
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "No puede introducir una granja la cual su fecha de creacion sea posterior al dia de hoy");
+                        alert.show();
+                    } else {
+                        
+                        granja.setFechaCreacion(Date.valueOf(datePickerCreate.getValue()));
+                        granjaInterface.crearGranja(granja);
+                        txtName.clear();
+                        datePickerCreate.setValue(null);
+                        comboBoxFarmer.getSelectionModel().clearSelection();
+                        LOGGER.info("Registro de la granja exitoso");
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Granja registrada correctamente");
+                        alert.show();
+                    }
+                    
                 }
-
             }
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(CreateFarmController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(CreateFarmController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

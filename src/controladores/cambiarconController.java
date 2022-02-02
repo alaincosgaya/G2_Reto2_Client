@@ -120,12 +120,12 @@ public class cambiarconController implements Initializable{
         System.out.println(find);
             if(!find.equals(null)){
                 u.actualizarCon(user);
-            }else
+            }else{
                 System.out.println(PasswdActual.getText());
         System.out.println(user.getPassword());
             System.out.println("Mal : ");
-
-        ((Node) (event.getSource())).getScene().getWindow().hide();
+    }
+        
     }
 
     @FXML

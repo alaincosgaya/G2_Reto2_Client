@@ -70,7 +70,9 @@ public class UserManagerImplementation implements UserInterface {
 
     @Override
     public void actualizarCon(UserEntity user) {
-        user.setPassword(CifradoClient.encrypt(user.getPassword()));
+        String con = CifradoClient.encrypt(user.getPassword());
+        System.out.println(con);
+        user.setPassword(con);
         //String id = user.getId().toString();
         webClient.edit(user, user.getId().toString());
     }

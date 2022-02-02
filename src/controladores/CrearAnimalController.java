@@ -228,7 +228,7 @@ public class CrearAnimalController {
             alert.show();
         } catch (BDServidorException ex) {
             Logger.getLogger(CrearAnimalController.class.getName()).log(Level.SEVERE, null, ex);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha surgido un problema debido a que no se ha seleccionado el filtro correctamente, por favor agrege uno.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha surgido un problema con el servidor, por favor intentelo más tarde.");
             alert.show();
         } catch (Exception e) {
             Logger.getLogger(PrincipalAnimalController.class.getName()).log(Level.SEVERE, null, e);

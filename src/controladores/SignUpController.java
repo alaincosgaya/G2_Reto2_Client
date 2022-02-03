@@ -16,6 +16,7 @@ import interfaces.UserInterface;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -74,11 +76,11 @@ public class SignUpController implements Initializable {
 
     @FXML
     private Button btnSignUp;
-    
+
     @FXML
     private ChoiceBox cBoxTipo;
-    
-    UserPrivilegeType privilege = null;
+
+    private UserPrivilegeType privilege;
 
     private final int max = 50;
     private Stage stage;
@@ -93,7 +95,7 @@ public class SignUpController implements Initializable {
         stage.setResizable(false);
         stage.setTitle("SignUp");
         stage.setScene(scene);
-        LOGGER.info("Llamada a los metodos y restricciones del controlador");
+
         cBoxTipo.setItems(FXCollections.observableArrayList("Granjero", "Trabajador"));
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
         cBoxTipo.selectionModelProperty().addListener(this::handlePrivilegios);
@@ -130,32 +132,27 @@ public class SignUpController implements Initializable {
     @FXML
     private void buttonEvent(ActionEvent event) throws IOException {
 
-        
-
         try {
             UserEntity user = new UserEntity();
             user.setUsername(txtUser.getText());
             user.setFullName(txtName.getText());
             user.setEmail(txtEmail.getText());
-            /*
-            Group.selectedToggleProperty().equals(tgGranjero);
-            System.out.println(tgGranjero.selectedProperty().getValue().booleanValue());
-            boolean statusG = tgGranjero.selectedProperty().getValue().booleanValue();
-*/          
             
             user.setUserPrivilege(privilege);
             user.setUserStatus(UserStatusType.ENABLED);
-            
+
             String con = CifradoClient.encrypt(txtPasswd.getText());
             user.setPassword(con);
-            
+
             UserInterface u = new UserManagerImplementation();
             UserEntity find = null;
             find = u.getUsuarioPorLogin(user.getUsername(), user.getPassword());
-            if(find == null){
+
+            if (find != null) {
                 u.crearUsuario(user);
-            }else{
-                
+            } else {
+                throw new SignInException("Usuario ya existe");
+
             }
 
             LOGGER.info("Carga del FXML de Session");
@@ -164,12 +161,18 @@ public class SignUpController implements Initializable {
             LOGGER.info("Llamada al controlador del FXML");
             SessionController controller = ((SessionController) loader.getController());
             controller.setStage(stage);
-            controller.initStage(root, user);
+            controller.setUser(user);
+            controller.initStage(root);
 
             ((Node) (event.getSource())).getScene().getWindow().hide();
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (SignInException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "El nombre de usuario introducido no esta disponible");
+            alert.showAndWait();
+
         }
 
     }
@@ -272,9 +275,10 @@ public class SignUpController implements Initializable {
                                                 txtName.textProperty().isEmpty().or(
                                                         lblCaract.visibleProperty().or(
                                                                 lblEmail.visibleProperty().or(
-                                                                        //Group.selectedToggleProperty().isNull().or(//Group.getSelectedToggle().isSelected()
-                                                                        lblNum.visibleProperty().or(
-                                                                                lblPasswd2.visibleProperty()
+                                                                        cBoxTipo.valueProperty().isNull().or(
+                                                                                lblNum.visibleProperty().or(
+                                                                                        lblPasswd2.visibleProperty()
+                                                                                )
                                                                         )
                                                                 )
                                                         )
@@ -283,7 +287,6 @@ public class SignUpController implements Initializable {
                                 )
                         )
                 )
-        // )
         );
     }
 
@@ -340,7 +343,7 @@ public class SignUpController implements Initializable {
             throw new SamePasswordException(lblPasswd2.getText());
         }
     }
-    
+
     public void handlePrivilegios(ObservableValue ov, Object oldValue, Object newValue) {
         if (newValue != null) {
             switch (newValue.toString()) {

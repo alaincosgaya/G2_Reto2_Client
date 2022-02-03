@@ -35,7 +35,7 @@ public class UserManagerImplementation implements UserInterface {
     }
 
     @Override
-    public UserEntity getZonaPorLogin(String username, String password) {
+    public UserEntity getUsuarioPorLogin(String username, String password) {
         UserEntity user = null;
         user = webClient.validatePassword(new GenericType<UserEntity>(){}, username, password);
         return user;

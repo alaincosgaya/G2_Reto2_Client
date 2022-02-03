@@ -158,7 +158,7 @@ public class SignInController implements Initializable {
             SignUpController controller = ((SignUpController) loader.getController());
             controller.setStage(stage);
             controller.initStage(root);
-            ((Node) (event.getSource())).getScene().getWindow().hide();
+            //((Node) (event.getSource())).getScene().getWindow().hide();
 
         } catch (IOException e) {
             e.printStackTrace();

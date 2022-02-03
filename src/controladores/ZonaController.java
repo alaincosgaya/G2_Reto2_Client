@@ -15,6 +15,8 @@ import clases.UserPrivilegeType;
 import clases.ZonaEntity;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
+import excepciones.CrearContratoException;
+import excepciones.CrearZonaException;
 import factoria.GranjaManagerImplementation;
 import static factoria.TrabajadorManagerFactory.getTrabajadorManagerImplementation;
 import factoria.TrabajadorManagerImplementation;
@@ -121,6 +123,8 @@ public class ZonaController {
     private ZonaEntity zonaCrear;
 
     private UserEntity usr;
+
+    private boolean boolNombre, boolFecha, boolGranja;
 
     public void setUser(UserEntity user) {
         this.usr = user;
@@ -344,7 +348,7 @@ public class ZonaController {
     }
 
     /**
-     * 
+     *
      *
      * @param ov
      * @param oldValue
@@ -411,6 +415,9 @@ public class ZonaController {
     @FXML
     public void insertarFila(ActionEvent event) {
         if (!crearZona) {
+            boolFecha = false;
+            boolGranja = false;
+            boolNombre = false;
             crearZona = true;
             zonaCrear = new ZonaEntity();
             colNombreZona.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -419,6 +426,15 @@ public class ZonaController {
             tablaZona.getSelectionModel().select(tablaZona.getItems().size());
         } else {
             crearZona = false;
+            if (!boolFecha || !boolNombre || !boolGranja) {
+                try {
+                    throw new CrearZonaException("No se han definido todas las opciones");
+                } catch (CrearZonaException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR,"No se han definido los valores de todos los campos");
+                    Logger.getLogger(ZonaController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
             zonaManager.crearZona(zonaCrear);
         }
 
@@ -429,6 +445,7 @@ public class ZonaController {
         String nombre = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
         if (crearZona) {
             zonaCrear.setNombreZona(nombre);
+            boolNombre = true;
         } else {
             ZonaEntity zona = (ZonaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
 
@@ -534,6 +551,7 @@ public class ZonaController {
         Date fechaCreacion = (Date) ((TableColumn.CellEditEvent) event).getNewValue();
         if (crearZona) {
             zonaCrear.setFechaCreacionZona(fechaCreacion);
+            boolFecha = true;
         } else {
             ZonaEntity zona = (ZonaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
             zona.setFechaCreacionZona(fechaCreacion);
@@ -547,6 +565,7 @@ public class ZonaController {
         GranjaEntity granja = (GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue();
         if (crearZona) {
             zonaCrear.setGranja(granja);
+            boolGranja = true;
         }
     }
 
@@ -588,33 +607,33 @@ public class ZonaController {
             Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-     /**
+
+    /**
      * Compara si el usuario seleccionado es un granjero o un trabajador. En
      * base al tipo habilita y deshabilita funciones de la ventana.
      *
      * @param user
      */
     public void tipoUsuario(UserEntity user) {
-     
-            LOGGER.log(Level.INFO, "Ajustando permisos de acceso en base al usuario.");
-            if (user.getUserPrivilege().equals(UserPrivilegeType.TRABAJADOR)) {
-                LOGGER.log(Level.INFO, "Usuario de tipo Trabajador");
-                btnAnadir.setVisible(false);
-                btnAsignar.setVisible(false);
-                btnBuscar.setVisible(false);
-                btnDesasignar.setVisible(false);
-                btnEliminar.setVisible(false);
-                btnPlus.setVisible(false);
-                tablaZona.setEditable(false);
-                tablaZona.setItems(FXCollections.observableArrayList(
-                        zonaManager.getZonasPorTrabajador(String.valueOf(user.getId()))));
-            } else {
-                LOGGER.log(Level.INFO, "Usuario de tipo Granjero");
-                tablaZona.setItems(FXCollections.observableArrayList(
-                        zonaManager.getAllZonas()));
-            }
-       
+
+        LOGGER.log(Level.INFO, "Ajustando permisos de acceso en base al usuario.");
+        if (user.getUserPrivilege().equals(UserPrivilegeType.TRABAJADOR)) {
+            LOGGER.log(Level.INFO, "Usuario de tipo Trabajador");
+            btnAnadir.setVisible(false);
+            btnAsignar.setVisible(false);
+            btnBuscar.setVisible(false);
+            btnDesasignar.setVisible(false);
+            btnEliminar.setVisible(false);
+            btnPlus.setVisible(false);
+            tablaZona.setEditable(false);
+            tablaZona.setItems(FXCollections.observableArrayList(
+                    zonaManager.getZonasPorTrabajador(String.valueOf(user.getId()))));
+        } else {
+            LOGGER.log(Level.INFO, "Usuario de tipo Granjero");
+            tablaZona.setItems(FXCollections.observableArrayList(
+                    zonaManager.getAllZonas()));
+        }
+
     }
 
 }

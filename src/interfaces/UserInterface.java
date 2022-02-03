@@ -17,10 +17,12 @@ import javax.ws.rs.core.GenericType;
  */
 public interface UserInterface {
     public void crearUsuario(UserEntity user);
+    public UserEntity getZonaPorLogin(String username, String password);
     public UserEntity getUsuarioPorLogin(String username, String password);
     public UserEntity findClient(UserEntity user);
     public Collection<UserEntity> findAllUsers();
     public UserEntity findClientValidatePasswd(UserEntity user);
     public void actualizarCon(UserEntity user);
+    public void editPasswd(UserEntity user, String passwd);
     public void resetPasswd(UserEntity user);
 }

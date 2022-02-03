@@ -42,6 +42,16 @@ public class UserManagerImplementation implements UserInterface {
     }
     
     @Override
+    public UserEntity getUsuarioPorLogin(String username, String password) {
+        List<UserEntity> user = null;
+        user = webClient.validatePassword(new GenericType<List<UserEntity>>(){}, username, password);
+        if(!user.isEmpty()){
+            return user.get(0);
+        }
+        return null;
+    }
+    
+    @Override
     public UserEntity findClient(UserEntity user) {
         UserEntity users = null;
         webClient.find(new GenericType<UserEntity>() {
@@ -70,9 +80,20 @@ public class UserManagerImplementation implements UserInterface {
 
     @Override
     public void actualizarCon(UserEntity user) {
-        user.setPassword(CifradoClient.encrypt(user.getPassword()));
+        String con = CifradoClient.encrypt(user.getPassword());
+        System.out.println(con);
+        user.setPassword(con);
         //String id = user.getId().toString();
         webClient.edit(user, user.getId().toString());
+    }
+    
+    @Override
+    public void editPasswd(UserEntity user, String password){
+        String con = CifradoClient.encrypt(password);
+        System.out.println(con);
+       
+      
+        webClient.editPasswd(user, password);
     }
     
     @Override

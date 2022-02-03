@@ -43,29 +43,6 @@ public class CifradoClient {
     private static final ResourceBundle configFile = ResourceBundle.getBundle("cifrado.key");
     private static UserInterface userManager;
     
-    /*public static void main(String[] args) {
-        String con = "abcd*1234";
-        
-        UserEntity user = new UserEntity();
-        userManager = new UserManagerImplementation();
-        UserClient webClientUser = new UserClient();
-        
-        user.setFullName("Idoia");
-        user.setEmail("idoia8.ormaetxea2000@gmail.com");
-        user.setPassword(CifradoClient.encrypt(con));
-        user.setUserStatus(UserStatusType.ENABLED);
-        user.setUserPrivilege(UserPrivilegeType.GRANJERO);
-        user.setUsername("idoia8");
-        System.out.println();
-        UserClient rest = new UserClient();
-        
-        rest.create(user);
-        
-       //CifradoClient cf = new CifradoClient();
-        System.out.println(CifradoClient.encrypt(con));
-        
-    }*/
-
     public static String encrypt(String plaintext) {
         
         byte[] bs = null;
@@ -94,6 +71,7 @@ public class CifradoClient {
         for (byte b : bytes) {
             sb.append(String.format("%02x", b));
         }
+        System.out.println(sb.toString());
         return sb.toString();
     }
 

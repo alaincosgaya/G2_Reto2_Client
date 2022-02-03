@@ -137,12 +137,7 @@ public class SignUpController implements Initializable {
             user.setUsername(txtUser.getText());
             user.setFullName(txtName.getText());
             user.setEmail(txtEmail.getText());
-            /*
-            Group.selectedToggleProperty().equals(tgGranjero);
-            System.out.println(tgGranjero.selectedProperty().getValue().booleanValue());
-            boolean statusG = tgGranjero.selectedProperty().getValue().booleanValue();
-             */
-
+            
             user.setUserPrivilege(privilege);
             user.setUserStatus(UserStatusType.ENABLED);
 
@@ -152,10 +147,12 @@ public class SignUpController implements Initializable {
             UserInterface u = new UserManagerImplementation();
             UserEntity find = null;
             find = u.getUsuarioPorLogin(user.getUsername(), user.getPassword());
+
             if (find != null) {
                 u.crearUsuario(user);
             } else {
                 throw new SignInException("Usuario ya existe");
+
             }
 
             LOGGER.info("Carga del FXML de Session");

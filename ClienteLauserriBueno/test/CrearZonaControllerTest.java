@@ -15,12 +15,12 @@ import org.junit.Ignore;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
+import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.base.NodeMatchers.isEnabled;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 /**
- * Clase Test que comprueba que los metodos de la clase ZonaController
- * funcionan.
+ * Clase Test que comprueba que los metodos de la clase CrearZona funcionan.
  *
  * @author 2dam
  */
@@ -32,6 +32,10 @@ public class CrearZonaControllerTest extends ApplicationTest {
         new App().start(stage);
     }
 
+    /**
+     * Metodo que permite la navegacion entre ventanas. llamaremos a este metodo
+     * en todos los teses
+     */
     public void navegacion() {
         clickOn("#textUser");
         write("pepa");
@@ -45,106 +49,74 @@ public class CrearZonaControllerTest extends ApplicationTest {
     }
 
     /**
-     * 
+     * Metodo que comprueba que se pueden crear zonas.
      */
     @Test
-    //   @Ignore
-    public void testA_abrirCrearZona() {
+    @Ignore
+    public void testA_CrearZona() {
+        navegacion();
+        clickOn("#btnAnadir");
+        clickOn("#txtName");
+        write("zona1");
+        clickOn("#comboSeleccionarGranja");
+        type(KeyCode.DOWN);
+        type(KeyCode.ENTER);
+        clickOn("#btnAnadir");
+        verifyThat("#tablaZona", isVisible());
+    }
+
+    /**
+     * Test que comprueba que se pueden abrir y cerrar la ventana CrearZona
+     */
+    @Test
+    @Ignore
+    public void testB_AbrirCerrarCrearZona() {
         navegacion();
         clickOn("#btnAnadir");
         verifyThat("#txtName", isVisible());
+        clickOn("#btnAtras");
+        verifyThat("#tablaZona", isVisible());
     }
 
     /**
-     * Metodo con el que se prueba que el filtro funciona e influye en la tabla.
-     * **AVISO** El test puede resultar fallido si da la casualidad de que los
-     * nombres de los animales que esta comparando son iguales.
+     * test el cual comprueba que se puede ir a la ventana de asignar
+     * trabajadores.
      */
     @Test
     @Ignore
-    public void testB_ProbarFiltro() {
+    public void testC_AsignarTrabajadores() {
         navegacion();
-        clickOn("#cBoxFiltro");
-        type(KeyCode.DOWN);
-        type(KeyCode.DOWN);
-        type(KeyCode.DOWN);
-        type(KeyCode.ENTER);
-        clickOn("#cBoxOpcion");
-        type(KeyCode.DOWN);
-        type(KeyCode.ENTER);
-        clickOn("#btnBuscar");
-        Node fila1 = lookup("#colNombreZona").nth(1).query();
-        clickOn("#seleccionFiltro");
-        type(KeyCode.DOWN);
-        type(KeyCode.DOWN);
-        type(KeyCode.DOWN);
-        type(KeyCode.DOWN);
-        type(KeyCode.ENTER);
-        clickOn("#btnBuscar");
-        Node fila2 = lookup("#colNombreZona").nth(1).query();
-        assertNotEquals(fila1.toString(), fila2.toString());
-    }
-
-    /**
-     * Test que demuestra la posibilidad de cambiar de nombre en la propia
-     * tabla.
-     */
-    @Test
-    @Ignore
-    public void testC_ModificarNombre() {
-        navegacion();
-        Node celdaNombre = lookup("#colNombreZona").nth(1).query();
-        doubleClickOn(celdaNombre);
-        write("Vacas");
-        press(KeyCode.ENTER);
-        sleep(1000);
-        //verifyThat("Se ha realizado el cambio de nombre", isVisible());
-    }
-
-    /**
-     * Metodo que demuestra la posibilidad de cambiar de fecha de nacimiento a
-     * una zona.
-     */
-    @Test
-    @Ignore
-    public void testD_ModificarFecha() {
-        navegacion();
-        Node celdaFecha = lookup("#colFechaCreacion").nth(1).query();
-        doubleClickOn(celdaFecha);
-        clickOn(celdaFecha);
-        write("01/02/2021");
-        press(KeyCode.ENTER);
-        sleep(1000);
-        //verifyThat("Se ha realizado el cambio de fecha", isVisible());
-    }
-
-    /**
-     * Test que comprueba que se puede eliminar a una zona seleccionado en la
-     * tabla.
-     */
-    @Test
-    @Ignore
-    public void testE_EliminarZona() {
-        navegacion();
-        //int rowCount=tabla.getItems().size();
-        Node fila = lookup(".table-row-cell").nth(0).query();
-        clickOn(fila);
-        verifyThat("#btnEliminar", isEnabled());
-        clickOn("#btnEliminar");
-        //verifyThat("¿Estas seguro de que quieres eliminar al animal?", isVisible());
-        //press(KeyCode.ENTER);
-        //clickOn("Eliminar");
-        //verifyThat("Animal eliminado exitosamente", isVisible());
-    }
-
-    /**
-     * Test que comprueba que se abre la ventana de asignarTrabajadores.
-     */
-    @Test
-    @Ignore
-    public void testF_AsignarTrabajadorVentana() {
-        navegacion();
-        clickOn("#btnAsignar");
+        clickOn("#btnAnadir");
+        clickOn("#anadirTrabajador");
         verifyThat("#tablaTrabajador", isVisible());
+        Node fila = lookup("#.table-row-cell").nth(0).query();
+        clickOn(fila);
+        clickOn("#btnAsignar");
+        verifyThat("¿Quiere seguir asignando trabajadores a la zona?", isVisible());
+    }
+
+    /**
+     * Test que comprueba que el boton btnAnadir esta deshabilitado hasta que se
+     * introduzcan los campos pertinenetes.
+     */
+    @Test
+    @Ignore
+    public void testD_ValidarDatos() {
+        navegacion();
+        clickOn("#btnAnadir");
+        verifyThat("#btnAnadir", isDisabled());
+    }
+
+    /**
+     * Test que comprueba que se puede volver a la VentanaZona
+     */
+    @Test
+    @Ignore
+    public void testE_Volver() {
+        navegacion();
+        clickOn("#btnAnadir");
+        verifyThat("#txtName", isVisible());
+        clickOn("#btnAtras");
+        verifyThat("#tablaZona", isVisible());
     }
 }

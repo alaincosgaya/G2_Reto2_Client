@@ -33,13 +33,6 @@ public class UserManagerImplementation implements UserInterface {
         webClient.create(user);
     
     }
-
-    @Override
-    public UserEntity getUsuarioPorLogin(String username, String password) {
-        UserEntity user = null;
-        user = webClient.validatePassword(new GenericType<UserEntity>(){}, username, password);
-        return user;
-    }
     
     @Override
     public UserEntity getUsuarioPorLogin(String username, String password) {

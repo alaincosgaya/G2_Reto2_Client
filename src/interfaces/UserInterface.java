@@ -17,7 +17,6 @@ import javax.ws.rs.core.GenericType;
  */
 public interface UserInterface {
     public void crearUsuario(UserEntity user);
-    public UserEntity getZonaPorLogin(String username, String password);
     public UserEntity getUsuarioPorLogin(String username, String password);
     public UserEntity findClient(UserEntity user);
     public Collection<UserEntity> findAllUsers();

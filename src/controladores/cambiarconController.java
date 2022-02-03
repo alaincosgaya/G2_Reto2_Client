@@ -110,16 +110,17 @@ public class cambiarconController implements Initializable{
 
     @FXML
     private void buttonEventEnviar(ActionEvent event) throws IOException {
-
+        //UserEntity user1 = new UserEntity();
         user.setUsername(user.getUsername());
         //String con = CifradoClient.encrypt(PasswdActual.getText());
         user.setPassword(PasswdActual.getText());
         UserInterface u = new UserManagerImplementation();
+        String passwd = PasswdNueva.getText();
         
         UserEntity find = u.findClientValidatePasswd(user);
         System.out.println(find);
             if(!find.equals(null)){
-                u.actualizarCon(user);
+                u.editPasswd(user, passwd);
             }else{
                 System.out.println(PasswdActual.getText());
         System.out.println(user.getPassword());

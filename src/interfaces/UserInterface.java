@@ -22,5 +22,6 @@ public interface UserInterface {
     public Collection<UserEntity> findAllUsers();
     public UserEntity findClientValidatePasswd(UserEntity user);
     public void actualizarCon(UserEntity user);
+    public void editPasswd(UserEntity user, String passwd);
     public void resetPasswd(UserEntity user);
 }

@@ -78,6 +78,15 @@ public class UserManagerImplementation implements UserInterface {
     }
     
     @Override
+    public void editPasswd(UserEntity user, String password){
+        String con = CifradoClient.encrypt(password);
+        System.out.println(con);
+       
+      
+        webClient.editPasswd(user, password);
+    }
+    
+    @Override
     public void resetPasswd(UserEntity user) {
         
         webClient.resetContra(new GenericType<UserEntity>() {

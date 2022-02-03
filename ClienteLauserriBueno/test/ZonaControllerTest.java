@@ -22,7 +22,7 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
  * Clase Test que comprueba que los metodos de la clase ZonaController
  * funcionan.
  *
- * @author 2dam
+ * @author Idoia
  */
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ZonaControllerTest extends ApplicationTest {

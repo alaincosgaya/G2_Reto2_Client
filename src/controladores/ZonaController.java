@@ -431,6 +431,7 @@ public class ZonaController {
                     throw new CrearZonaException("No se han definido todas las opciones");
                 } catch (CrearZonaException ex) {
                     Alert alert = new Alert(Alert.AlertType.ERROR,"No se han definido los valores de todos los campos");
+                    alert.showAndWait();
                     Logger.getLogger(ZonaController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -600,6 +601,7 @@ public class ZonaController {
             CrearZonaController controller = ((CrearZonaController) loader.getController());
             controller.setStage(stage);
             LOGGER.info("Inicio del stage de Session");
+            controller.setUser(usr);
             controller.initStage(root);
 
             //  paneVentana.getScene().getWindow().hide();

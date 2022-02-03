@@ -123,6 +123,7 @@ public class CrearZonaController {
             LOGGER.info("Llamada al controlador del FXML");
             ZonaController controller = ((ZonaController) loader.getController());
             controller.setStage(stage);
+            controller.setUser(usr);
             controller.initStage(root);
 
             //paneSignUp.getScene().getWindow().hide();

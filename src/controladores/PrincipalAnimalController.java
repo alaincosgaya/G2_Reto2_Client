@@ -5,6 +5,7 @@ import clases.DateEditingCell;
 import clases.EstadoAnimal;
 import clases.SexoAnimal;
 import clases.TipoAnimal;
+import clases.UserEntity;
 import clases.ZonaEntity;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
@@ -163,6 +164,12 @@ public class PrincipalAnimalController {
      */
     @FXML
     private Button btnEliminar;
+
+    private UserEntity usr;
+
+    public void setUser(UserEntity user) {
+        this.usr = user;
+    }
 
     /**
      * Metodo que indica el stage.

@@ -71,7 +71,7 @@ public class CifradoClient {
         byte[] bs = null;
         //PublicKey key;
         try {
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            Cipher cipher = Cipher.getInstance("RSA");
             //key = readPublicKey("./cifrado/public.key");
             
             cipher.init(Cipher.ENCRYPT_MODE, readPublicKey());

@@ -123,15 +123,16 @@ public class SignInController implements Initializable {
             //String con = CifradoClient.encrypt(textPasswd.getText());
             user.setPassword(textPasswd.getText());
             UserInterface u = new UserManagerImplementation();
-            u.findClientValidatePasswd(user);
-            
+            user = u.findClientValidatePasswd(user);
+            user.setPassword(textPasswd.getText()); 
             LOGGER.info("Carga del FXML de Session");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/Session.fxml"));
             Parent root = (Parent) loader.load();
             LOGGER.info("Llamada al controlador del FXML");
             SessionController controller = ((SessionController) loader.getController());
             controller.setStage(stage);
-            controller.initStage(root, user);
+            controller.initStage(root);
+            controller.setUser(user);
             event.consume();
             //paneVentana.getScene().getWindow().hide();
             //((Node) (event.getSource())).getScene().getWindow().hide();
@@ -157,7 +158,7 @@ public class SignInController implements Initializable {
             SignUpController controller = ((SignUpController) loader.getController());
             controller.setStage(stage);
             controller.initStage(root);
-            ((Node) (event.getSource())).getScene().getWindow().hide();
+            //((Node) (event.getSource())).getScene().getWindow().hide();
 
         } catch (IOException e) {
             e.printStackTrace();

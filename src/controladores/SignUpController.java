@@ -19,6 +19,8 @@ import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
@@ -71,11 +74,11 @@ public class SignUpController implements Initializable {
 
     @FXML
     private Button btnSignUp;
-
-    private ToggleGroup Group;
-
-    private RadioButton tgTrabajador;
-    private RadioButton tgGranjero;
+    
+    @FXML
+    private ChoiceBox cBoxTipo;
+    
+    UserPrivilegeType privilege = null;
 
     private final int max = 50;
     private Stage stage;
@@ -91,6 +94,9 @@ public class SignUpController implements Initializable {
         stage.setTitle("SignUp");
         stage.setScene(scene);
         LOGGER.info("Llamada a los metodos y restricciones del controlador");
+        cBoxTipo.setItems(FXCollections.observableArrayList("Granjero", "Trabajador"));
+        LOGGER.info("Llamada a los metodos y restricciones del controlador");
+        cBoxTipo.selectionModelProperty().addListener(this::handlePrivilegios);
         stage.show();
     }
 
@@ -124,7 +130,7 @@ public class SignUpController implements Initializable {
     @FXML
     private void buttonEvent(ActionEvent event) throws IOException {
 
-        UserPrivilegeType privilege = null;
+        
 
         try {
             UserEntity user = new UserEntity();
@@ -136,12 +142,6 @@ public class SignUpController implements Initializable {
             System.out.println(tgGranjero.selectedProperty().getValue().booleanValue());
             boolean statusG = tgGranjero.selectedProperty().getValue().booleanValue();
 */          
-            if (Group.selectedToggleProperty().equals(tgGranjero)) {
-                privilege = UserPrivilegeType.GRANJERO;
-            }
-            if (tgTrabajador.isSelected()) {
-                privilege = UserPrivilegeType.TRABAJADOR;
-            }
             
             user.setUserPrivilege(privilege);
             user.setUserStatus(UserStatusType.ENABLED);
@@ -150,9 +150,12 @@ public class SignUpController implements Initializable {
             user.setPassword(con);
             
             UserInterface u = new UserManagerImplementation();
-            UserEntity find = u.findClient(user);
-            if(!find.equals(null)){
+            UserEntity find = null;
+            find = u.getUsuarioPorLogin(user.getUsername(), user.getPassword());
+            if(find == null){
                 u.crearUsuario(user);
+            }else{
+                
             }
 
             LOGGER.info("Carga del FXML de Session");
@@ -335,6 +338,19 @@ public class SignUpController implements Initializable {
     public void validarEqualPasswd() throws SamePasswordException {
         if (!txtPasswd.getText().equals(txtPassw2.getText())) {
             throw new SamePasswordException(lblPasswd2.getText());
+        }
+    }
+    
+    public void handlePrivilegios(ObservableValue ov, Object oldValue, Object newValue) {
+        if (newValue != null) {
+            switch (newValue.toString()) {
+                case ("Granjero"):
+                    privilege = UserPrivilegeType.GRANJERO;
+                    break;
+                case ("Trabajador"):
+                    privilege = UserPrivilegeType.TRABAJADOR;
+                    break;
+            }
         }
     }
 }

@@ -42,6 +42,16 @@ public class UserManagerImplementation implements UserInterface {
     }
     
     @Override
+    public UserEntity getUsuarioPorLogin(String username, String password) {
+        List<UserEntity> user = null;
+        user = webClient.validatePassword(new GenericType<List<UserEntity>>(){}, username, password);
+        if(!user.isEmpty()){
+            return user.get(0);
+        }
+        return null;
+    }
+    
+    @Override
     public UserEntity findClient(UserEntity user) {
         UserEntity users = null;
         webClient.find(new GenericType<UserEntity>() {

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
@@ -68,16 +67,12 @@
             <Label fx:id="lblPasswd2" layoutX="464.0" layoutY="236.0" prefHeight="17.0" prefWidth="168.0" styleClass="except" stylesheets="@fxml.css" text="* No coinciden" textFill="RED" />
             
             <Label fx:id="lblEmail" focusTraversable="false" layoutX="464.0" layoutY="108.0" prefHeight="17.0" prefWidth="169.0" styleClass="except" stylesheets="@fxml.css" text="* Formato de correo incorrecto" textFill="RED" />
-            <RadioButton fx:id="tgTrabajador" layoutX="309.0" layoutY="135.0" mnemonicParsing="false" text="Trabajador">
-               <toggleGroup>
-                  <ToggleGroup fx:id="Group" />
-               </toggleGroup></RadioButton>
-            <RadioButton fx:id="tgGranjero" layoutX="308.0" layoutY="160.0" mnemonicParsing="false" text="Granjero" toggleGroup="$Group" />
             <Label layoutX="152.0" layoutY="130.0" prefHeight="27.0" prefWidth="43.0" styleClass="txt" stylesheets="@fxml.css" text="Tipo" />
             <Label layoutX="57.0" layoutY="-23.0" styleClass="header" stylesheets="@fxml.css" text="Crea tu cuenta">
                <font>
                   <Font size="30.0" />
                </font></Label>
+            <ChoiceBox fx:id="cBoxTipo" layoutX="308.0" layoutY="148.0" prefWidth="150.0" style="-fx-border-color: #a7c957; -fx-background-color: white;" />
          </children>
          
       </Pane>

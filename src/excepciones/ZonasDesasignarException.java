@@ -10,10 +10,10 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Idoia Ormaetxea
+ * @author Alain Cosgaya
  */
-public class ClienteServidorConexionException extends Exception{
-    public ClienteServidorConexionException(String message){
+public class ZonasDesasignarException extends Exception{
+     public ZonasDesasignarException(String message){
         Logger logger = Logger.getAnonymousLogger();
         logger.log(Level.SEVERE,message,this);
     }

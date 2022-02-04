@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author 2dam
+ * @author Idoia Ormaetxea
  */
 public class BDServidorException extends Exception{
      public BDServidorException(String message){

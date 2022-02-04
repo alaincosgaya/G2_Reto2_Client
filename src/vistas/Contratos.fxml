@@ -25,7 +25,9 @@
     </top>
     <bottom>
         <Pane prefHeight="322.0" prefWidth="600.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
-          
+            <children>
+                <fx:include fx:id="hBoxMenu" source="Menu.fxml" />
+            </children>
             <children>
             
                 <Button fx:id="btnInforme" cancelButton="true" focusTraversable="false" layoutX="507.0" layoutY="281.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: white; -fx-border-color: #a7c957;" text="Informe" />
@@ -35,34 +37,7 @@
                         <Font name="System Bold" size="12.0" />
                     </font>
                 </Button>
-                <MenuBar layoutX="-4.0" layoutY="1.0" prefHeight="26.0" prefWidth="646.0" style="-fx-background-color: white;">
-                    <menus>
-                        <Menu mnemonicParsing="false" text="Inicio">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Granja" />
-                                <MenuItem mnemonicParsing="false" text="Zona" />
-                                <MenuItem mnemonicParsing="false" text="Animal" />
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Trabajador">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Contratos" />
-                                <MenuItem mnemonicParsing="false" text="Trabajadores" />
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Perfil">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Perfil" />
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Salir">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Cerrar sesión" />
-                                <MenuItem mnemonicParsing="false" text="Salir" />
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
+                
                 <TableView fx:id="tablaContratos" editable="true" layoutX="12.0" layoutY="100.0" prefHeight="206.0" prefWidth="417.0">
                     <columns>
                         <TableColumn fx:id="colTrabajador" prefWidth="91.99996948242188" style="-fx-background-color: linear-gradient(to bottom, #a7c957, #ffffff);" text="Trabajador" />
@@ -86,9 +61,10 @@
                     </font>
                 </Button>
                 <Button fx:id="btnInsert" layoutX="433.0" layoutY="280.0" mnemonicParsing="false" style="-fx-background-color: WHITE; -fx-border-color: #a7c957;" text="+" textFill="#a7c957">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Button>
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Button>
             </children>
          
         </Pane>

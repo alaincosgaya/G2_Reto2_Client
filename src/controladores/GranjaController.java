@@ -10,6 +10,8 @@ import clases.GranjaEntity;
 import clases.GranjeroEntity;
 import clases.UserEntity;
 import clases.UserPrivilegeType;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import excepciones.NameLetterException;
 import factoria.GranjaManagerImplementation;
 import factoria.GranjeroManagerImplementation;
@@ -121,6 +123,7 @@ public class GranjaController {
     private boolean nueva;
 
     private String user;
+    private UserEntity usr;
 
     /**
      * El metodo que indica el stage.
@@ -129,6 +132,10 @@ public class GranjaController {
      */
     public void setStage(Stage stage1) {
         stage = stage1;
+    }
+
+    public void setUser(UserEntity user) {
+        this.usr = user;
     }
 
     /**
@@ -175,7 +182,14 @@ public class GranjaController {
             }
         });
         granjaInterface = new GranjaManagerImplementation();
-        tableViewGranja.setItems(FXCollections.observableArrayList(granjaInterface.getAllGranjas()));
+        try {
+            tableViewGranja.setItems(FXCollections.observableArrayList(granjaInterface.getAllGranjas()));
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tipoUsuario(usr);
         nueva = false;
         stage.show();
     }
@@ -197,10 +211,17 @@ public class GranjaController {
             comboBoxTipoElegido.setItems(null);
             Collection listadoGranjas = null;
             switch (filtrado) {
-                case ("Nombre"):
-                    listadoGranjas = granjaInterface.getAllGranjas();
-                    cargarDatosTipo(listadoGranjas);
-                    break;
+                case ("Nombre"): {
+                    try {
+                        listadoGranjas = granjaInterface.getAllGranjas();
+                    } catch (ClienteServidorConexionException ex) {
+                        Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (BDServidorException ex) {
+                        Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                cargarDatosTipo(listadoGranjas);
+                break;
                 case ("Granjero"):
                     listadoGranjas = granjeroInterface.getAllGranjeros();
                     cargarDatosTipo(listadoGranjas);
@@ -308,37 +329,43 @@ public class GranjaController {
      */
     @FXML
     private void findFarm(ActionEvent event) {
-        Collection<GranjaEntity> granjas = null;
-        GranjaEntity granja = null;
-        String eleccion;
-        switch (comboBoxTipo.getValue()) {
-            case ("Nombre"):
-                String valorNombre = String.valueOf(((GranjaEntity) comboBoxTipoElegido.getSelectionModel().getSelectedItem()).getNombreGranja());
-                granja = granjaInterface.getGranjaPorNombre(valorNombre);
-                cargarDatosEnTablaPorNombre(granja);
-                comboBoxTipoElegido.getSelectionModel().clearSelection();
-                comboBoxTipoElegido.setDisable(true);
-                btnBuscar.setDisable(true);
-                break;
-            case ("Granjero"):
-                String valorGranjero = String.valueOf(((GranjeroEntity) comboBoxTipoElegido.getSelectionModel().getSelectedItem()).getUsername());
-                granjas = granjaInterface.getGranjasPorGranjero(valorGranjero);
-                cargarDatosEnTablaPorGranjero(granjas);
-                comboBoxTipoElegido.getSelectionModel().clearSelection();
-                comboBoxTipoElegido.setDisable(true);
-                btnBuscar.setDisable(true);
-                break;
-            case ("Todas"):
-                granjas = granjaInterface.getAllGranjas();
-                cargarDatosEnTablaPorTodas(granjas);
-                btnBuscar.setDisable(true);
-                break;
+        try {
+            Collection<GranjaEntity> granjas = null;
+            GranjaEntity granja = null;
+            String eleccion;
+            switch (comboBoxTipo.getValue()) {
+                case ("Nombre"):
+                    String valorNombre = String.valueOf(((GranjaEntity) comboBoxTipoElegido.getSelectionModel().getSelectedItem()).getNombreGranja());
+                    granja = granjaInterface.getGranjaPorNombre(valorNombre);
+                    cargarDatosEnTablaPorNombre(granja);
+                    comboBoxTipoElegido.getSelectionModel().clearSelection();
+                    comboBoxTipoElegido.setDisable(true);
+                    btnBuscar.setDisable(true);
+                    break;
+                case ("Granjero"):
+                    String valorGranjero = String.valueOf(((GranjeroEntity) comboBoxTipoElegido.getSelectionModel().getSelectedItem()).getUsername());
+                    granjas = granjaInterface.getGranjasPorGranjero(valorGranjero);
+                    cargarDatosEnTablaPorGranjero(granjas);
+                    comboBoxTipoElegido.getSelectionModel().clearSelection();
+                    comboBoxTipoElegido.setDisable(true);
+                    btnBuscar.setDisable(true);
+                    break;
+                case ("Todas"):
+                    granjas = granjaInterface.getAllGranjas();
+                    cargarDatosEnTablaPorTodas(granjas);
+                    btnBuscar.setDisable(true);
+                    break;
+            }
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
-     * Este metodo valida que al pulsar el botón Informe, se cree un informa 
-     * con todos los datos de als granjas 
+     * Este metodo valida que al pulsar el botón Informe, se cree un informa con
+     * todos los datos de als granjas
      *
      * @param event
      */
@@ -378,42 +405,48 @@ public class GranjaController {
      */
     @FXML
     private void modificarNombreGranja(Event event) {
-        GranjaEntity granja = (GranjaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        String nombreGranja = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
-        GranjaEntity granjaEncontrada = granjaInterface.getGranjaPorNombre(nombreGranja);
-        if (granjaEncontrada != null) {
-            LOGGER.severe("Este nombre ya pertenece a una granja");
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Este nombre ya pertenece a una granja");
-            alert.show();
-            Collection<GranjaEntity> granjas = null;
-            granjas = granjaInterface.getAllGranjas();
-            cargarDatosEnTablaPorTodas(granjas);
-        } else {
-            if (nombreGranja.length() > max) {
-                LOGGER.severe("Ha superado el límite de caracteres permitido, que son 50");
-                Alert alert = new Alert(Alert.AlertType.ERROR, "Ha superado el límite de caracteres permitido, que son 50");
+        try {
+            GranjaEntity granja = (GranjaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            String nombreGranja = String.valueOf(((TableColumn.CellEditEvent) event).getNewValue());
+            GranjaEntity granjaEncontrada = granjaInterface.getGranjaPorNombre(nombreGranja);
+            if (granjaEncontrada != null) {
+                LOGGER.severe("Este nombre ya pertenece a una granja");
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Este nombre ya pertenece a una granja");
                 alert.show();
                 Collection<GranjaEntity> granjas = null;
                 granjas = granjaInterface.getAllGranjas();
                 cargarDatosEnTablaPorTodas(granjas);
             } else {
-                boolean correcto = false;
-                correcto = validateLettersAndSpaces(nombreGranja);
-                if (correcto) {
-                    granjaInterface.cambiarNombreDeLaGranja(granja.getIdGranja(), nombreGranja);
-                    granja.setNombreGranja(nombreGranja);
-                    Collection<GranjaEntity> granjas = null;
-                    granjas = granjaInterface.getAllGranjas();
-                    cargarDatosEnTablaPorTodas(granjas);
-                } else {
-                    LOGGER.severe("Solo puede introducir letras o espacios");
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Solo puede introducir letras o espacios");
+                if (nombreGranja.length() > max) {
+                    LOGGER.severe("Ha superado el límite de caracteres permitido, que son 50");
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Ha superado el límite de caracteres permitido, que son 50");
                     alert.show();
                     Collection<GranjaEntity> granjas = null;
                     granjas = granjaInterface.getAllGranjas();
                     cargarDatosEnTablaPorTodas(granjas);
+                } else {
+                    boolean correcto = false;
+                    correcto = validateLettersAndSpaces(nombreGranja);
+                    if (correcto) {
+                        granjaInterface.cambiarNombreDeLaGranja(granja.getIdGranja(), nombreGranja);
+                        granja.setNombreGranja(nombreGranja);
+                        Collection<GranjaEntity> granjas = null;
+                        granjas = granjaInterface.getAllGranjas();
+                        cargarDatosEnTablaPorTodas(granjas);
+                    } else {
+                        LOGGER.severe("Solo puede introducir letras o espacios");
+                        Alert alert = new Alert(Alert.AlertType.ERROR, "Solo puede introducir letras o espacios");
+                        alert.show();
+                        Collection<GranjaEntity> granjas = null;
+                        granjas = granjaInterface.getAllGranjas();
+                        cargarDatosEnTablaPorTodas(granjas);
+                    }
                 }
             }
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -462,18 +495,30 @@ public class GranjaController {
         // converting ZonedDateTime to Date using Date.from() and ZonedDateTime.toInstant()
         Date utilDate = Date.from(zonedDateTime.toInstant());
         if (fecha.after(utilDate)) {
-            LOGGER.severe(user);
-            Alert alert = new Alert(Alert.AlertType.ERROR, "No puede cambiar una fecha la cual su fecha de creacion sea posterior al dia de hoy");
-            alert.show();
-            Collection<GranjaEntity> granjas = null;
-            granjas = granjaInterface.getAllGranjas();
-            cargarDatosEnTablaPorTodas(granjas);
+            try {
+                LOGGER.severe(user);
+                Alert alert = new Alert(Alert.AlertType.ERROR, "No puede cambiar una fecha la cual su fecha de creacion sea posterior al dia de hoy");
+                alert.show();
+                Collection<GranjaEntity> granjas = null;
+                granjas = granjaInterface.getAllGranjas();
+                cargarDatosEnTablaPorTodas(granjas);
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
-            granja.setFechaCreacion(fecha);
-            granjaInterface.editarGranja(granja);
-            Collection<GranjaEntity> granjas = null;
-            granjas = granjaInterface.getAllGranjas();
-            cargarDatosEnTablaPorTodas(granjas);
+            try {
+                granja.setFechaCreacion(fecha);
+                granjaInterface.editarGranja(granja);
+                Collection<GranjaEntity> granjas = null;
+                granjas = granjaInterface.getAllGranjas();
+                cargarDatosEnTablaPorTodas(granjas);
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -484,14 +529,20 @@ public class GranjaController {
      */
     @FXML
     private void modificarGranjero(Event event) {
-        GranjaEntity granja = (GranjaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
-        GranjeroEntity granjero = (GranjeroEntity) ((TableColumn.CellEditEvent) event).getNewValue();
-        // granjaInterface.cambiarNombreDeLaGranja(String.valueOf(granja.getIdGranja()), nombreGranja);
-        granja.setGranjero(granjero);
-        granjaInterface.editarGranja(granja);
-        Collection<GranjaEntity> granjas = null;
-        granjas = granjaInterface.getAllGranjas();
-        cargarDatosEnTablaPorTodas(granjas);
+        try {
+            GranjaEntity granja = (GranjaEntity) ((TableColumn.CellEditEvent) event).getRowValue();
+            GranjeroEntity granjero = (GranjeroEntity) ((TableColumn.CellEditEvent) event).getNewValue();
+            // granjaInterface.cambiarNombreDeLaGranja(String.valueOf(granja.getIdGranja()), nombreGranja);
+            granja.setGranjero(granjero);
+            granjaInterface.editarGranja(granja);
+            Collection<GranjaEntity> granjas = null;
+            granjas = granjaInterface.getAllGranjas();
+            cargarDatosEnTablaPorTodas(granjas);
+        } catch (ClienteServidorConexionException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BDServidorException ex) {
+            Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
@@ -516,13 +567,19 @@ public class GranjaController {
         Optional<ButtonType> action = alert.showAndWait();
 
         if (action.get() == ButtonType.OK) {
-            LOGGER.info("Borrado de la granja");
-            granjaInterface.borrarGranja(String.valueOf(granja.getIdGranja()));
-            Alert alert2 = new Alert(Alert.AlertType.INFORMATION, "Se ha eliminado correctamente la granja");
-            alert2.show();
-            Collection<GranjaEntity> granjas = null;
-            granjas = granjaInterface.getAllGranjas();
-            cargarDatosEnTablaPorTodas(granjas);
+            try {
+                LOGGER.info("Borrado de la granja");
+                granjaInterface.borrarGranja(String.valueOf(granja.getIdGranja()));
+                Alert alert2 = new Alert(Alert.AlertType.INFORMATION, "Se ha eliminado correctamente la granja");
+                alert2.show();
+                Collection<GranjaEntity> granjas = null;
+                granjas = granjaInterface.getAllGranjas();
+                cargarDatosEnTablaPorTodas(granjas);
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } else {
             Alert alert3 = new Alert(Alert.AlertType.INFORMATION, "No se ha eliminado la granja");
             alert3.show();
@@ -552,6 +609,36 @@ public class GranjaController {
             btnCreate.setVisible(false);
             btnDelete.setVisible(false);
             tableViewGranja.setEditable(false);
+        }
+    }
+
+    public void tipoUsuario(UserEntity user) {
+
+        LOGGER.log(Level.INFO, "Ajustando permisos de acceso en base al usuario.");
+        if (user.getUserPrivilege().equals(UserPrivilegeType.TRABAJADOR)) {
+            try {
+                LOGGER.log(Level.INFO, "Usuario de tipo Trabajador");
+                btnCreate.setVisible(false);
+                btnDelete.setVisible(false);
+
+                tableViewGranja.setEditable(false);
+                tableViewGranja.setItems(FXCollections.observableArrayList(
+                        granjaInterface.getGranjasPorTrabajador(usr.getUsername())));
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            try {
+                LOGGER.log(Level.INFO, "Usuario de tipo Granjero");
+                tableViewGranja.setItems(FXCollections.observableArrayList(
+                        granjaInterface.getGranjasPorGranjero(usr.getUsername())));
+            } catch (ClienteServidorConexionException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BDServidorException ex) {
+                Logger.getLogger(GranjaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 

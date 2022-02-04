@@ -6,6 +6,8 @@
 package interfaces;
 
 import clases.GranjaEntity;
+import excepciones.BDServidorException;
+import excepciones.ClienteServidorConexionException;
 import java.util.Collection;
 import java.util.Date;
 
@@ -15,25 +17,27 @@ import java.util.Date;
  */
 public interface GranjaInterface {
     
-    public void crearGranja(GranjaEntity granja);
+    public void crearGranja(GranjaEntity granja)throws ClienteServidorConexionException, BDServidorException;
     
-    public Collection<GranjaEntity> getAllGranjas();
+    public Collection<GranjaEntity> getAllGranjas()throws ClienteServidorConexionException, BDServidorException;
     
-    public GranjaEntity getGranja(String idGranja);
+    public GranjaEntity getGranja(String idGranja)throws ClienteServidorConexionException, BDServidorException;
     
-    public GranjaEntity getGranjaPorNombre(String nombreGranja);
+    public GranjaEntity getGranjaPorNombre(String nombreGranja)throws ClienteServidorConexionException, BDServidorException;
     
-    public GranjaEntity getGranjaPorzona(String idZona);
+    public GranjaEntity getGranjaPorzona(String idZona)throws ClienteServidorConexionException, BDServidorException;
     
-    public Collection<GranjaEntity> getGranjasPorGranjero(String username);
+    public Collection<GranjaEntity> getGranjasPorGranjero(String username)throws ClienteServidorConexionException, BDServidorException;
     
-    public Collection<GranjaEntity> getGranjasPorTrabajador(String username);
+    public Collection<GranjaEntity> getGranjasPorTrabajador(String username)throws ClienteServidorConexionException, BDServidorException;
     
-    public GranjaEntity cambiarNombreDeLaGranja(Long idGranja, String nombreGranja);
+    public Collection<GranjaEntity> getGranjasNoTrabajador(String username)throws ClienteServidorConexionException, BDServidorException;
     
-    public GranjaEntity cambiarFechaCreacionDeLaGranja(Long idGranja, Date fechaCreacion);
+    public GranjaEntity cambiarNombreDeLaGranja(Long idGranja, String nombreGranja)throws ClienteServidorConexionException, BDServidorException;
     
-    public void borrarGranja(String idGranja);
+    public GranjaEntity cambiarFechaCreacionDeLaGranja(Long idGranja, Date fechaCreacion)throws ClienteServidorConexionException, BDServidorException;
+    
+    public void borrarGranja(String idGranja)throws ClienteServidorConexionException, BDServidorException;
 
-    public void editarGranja(GranjaEntity granja);
+    public void editarGranja(GranjaEntity granja)throws ClienteServidorConexionException, BDServidorException;
 }

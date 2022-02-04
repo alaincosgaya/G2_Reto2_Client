@@ -31,7 +31,7 @@ public class GranjaEntity implements Serializable {
     private SimpleStringProperty nombreGranja;
     private SimpleObjectProperty<Date> fechaCreacion;
     private SimpleObjectProperty<GranjeroEntity> granjero;
-    private SimpleListProperty<Zona> zonas;
+    private SimpleListProperty<ZonaEntity> zonas;
     private SimpleListProperty<ContratoEntity> contratos;
 
     //Constructores
@@ -44,7 +44,7 @@ public class GranjaEntity implements Serializable {
         this.contratos = new SimpleListProperty();
     }
 
-    public GranjaEntity(Long idGranja, String nombreGranja, Date fechaCreacion, GranjeroEntity granjero, List<Zona> zonas, List<ContratoEntity> contratos) {
+    public GranjaEntity(Long idGranja, String nombreGranja, Date fechaCreacion, GranjeroEntity granjero, List<ZonaEntity> zonas, List<ContratoEntity> contratos) {
         this.idGranja = new SimpleLongProperty(idGranja);
         this.nombreGranja = new SimpleStringProperty(nombreGranja);
         this.fechaCreacion = new SimpleObjectProperty(fechaCreacion);
@@ -87,11 +87,11 @@ public class GranjaEntity implements Serializable {
     }
 
     @XmlTransient
-    public ObservableList<Zona> getZonas() {
+    public ObservableList<ZonaEntity> getZonas() {
         return this.zonas.get();
     }
 
-    public void setZonas(ObservableList<Zona> zonas) {
+    public void setZonas(ObservableList<ZonaEntity> zonas) {
         this.zonas.set(zonas);
     }
 

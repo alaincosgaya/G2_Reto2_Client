@@ -7,6 +7,7 @@ package restful;
 
 import clases.ZonaEntity;
 import java.net.ConnectException;
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -29,8 +30,8 @@ public class ZonaClient {
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:21051/Lauserri/webresources";
-    
+    private static final String BASE_URI = ResourceBundle.getBundle("archivos.config")
+            .getString("restfulURI");
     /**
      * Constructor de zona vacio
      */

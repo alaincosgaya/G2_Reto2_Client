@@ -9,6 +9,7 @@ import clases.ContratoEntity;
 import clases.ContratoId;
 import clases.GranjaEntity;
 import clases.TrabajadorEntity;
+import clases.UserEntity;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
 import static factoria.ContratoManagerFactory.getContratoManagerImplementation;
@@ -80,6 +81,7 @@ public class ContratarTrabajadorController {
     private boolean boolTrabajador;
 
     private TrabajadorEntity trabajadorSeleccionado;
+    private UserEntity user;
 
     /**
      * El metodo que indica el stage.
@@ -88,6 +90,9 @@ public class ContratarTrabajadorController {
      */
     public void setStage(Stage stage1) {
         stage = stage1;
+    }
+    public void setUser(UserEntity user){
+        this.user = user;
     }
 
     /**
@@ -130,7 +135,7 @@ public class ContratarTrabajadorController {
         }
         try {
             LOGGER.log(Level.INFO, "Cargando granjas en la combobox.");
-            cBoxGranja.setItems(FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero("g1")));
+            cBoxGranja.setItems(FXCollections.observableArrayList(granjaManager.getGranjasPorGranjero(user.getUsername())));
         } catch (ClienteServidorConexionException ex) {
             alertErrores("Debido a un problema del servidor,"
                     + " no se han podido cargar las granjas. En el caso de "

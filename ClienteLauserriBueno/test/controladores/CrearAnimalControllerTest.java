@@ -1,3 +1,5 @@
+package controladores;
+
 
 import aplicacion.App;
 import javafx.scene.control.TextField;
@@ -37,7 +39,7 @@ public class CrearAnimalControllerTest extends ApplicationTest {
      */
     public void navegacion() {
         clickOn("#textUser");
-        write("pepa");
+        write("admin");
         clickOn("#textPasswd");
         write("abcd*1234");
         clickOn("#btnLogin");

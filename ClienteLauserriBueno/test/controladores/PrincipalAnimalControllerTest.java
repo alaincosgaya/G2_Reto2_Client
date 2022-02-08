@@ -1,3 +1,5 @@
+package controladores;
+
 
 import aplicacion.App;
 import clases.AnimalEntity;
@@ -41,7 +43,7 @@ public class PrincipalAnimalControllerTest extends ApplicationTest {
      */
     public void navegacion() {
         clickOn("#textUser");
-        write("pepa");
+        write("admin");
         clickOn("#textPasswd");
         write("abcd*1234");
         clickOn("#btnLogin");

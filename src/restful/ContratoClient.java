@@ -5,6 +5,7 @@
  */
 package restful;
 
+import clases.ContratoId;
 import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
@@ -74,7 +75,7 @@ public class ContratoClient {
      * @return
      * @throws ClientErrorException
      */
-    public <T> T find(GenericType<T> responseType, String id) throws ClientErrorException {
+    public <T> T find(GenericType<T> responseType, ContratoId id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

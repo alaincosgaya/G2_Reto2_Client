@@ -21,6 +21,7 @@ import interfaces.GranjaInterface;
 import interfaces.TrabajadorInterface;
 import interfaces.ZonaInterface;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -115,6 +116,7 @@ public class ContratosController {
      * Atributos a utilizar.
      */
 
+    private Collection trabajadoresListado;
     private ObservableList<ContratoEntity> contratos;
 
     private ObservableList granjas;
@@ -252,9 +254,12 @@ public class ContratosController {
                 Collection lista = null;
                 switch (filtro) {
                     case ("Trabajador"):
-
+                        lista = new ArrayList<String>();
                         // Carga todos los trabajadores
-                        lista = trabajadorManager.getAllTrabajadores();
+                        trabajadoresListado = trabajadorManager.getAllTrabajadores();
+                        for (Object object : trabajadoresListado) {
+                            lista.add(((TrabajadorEntity)object).getUsername());
+                        }
                         cargarDatosFiltrado(lista);
                         break;
                     case ("Granja"):
@@ -315,7 +320,7 @@ public class ContratosController {
             String filtro = cBoxFiltro.getValue();
             switch (filtro) {
                 case ("Trabajador"):
-                    idBusqueda = String.valueOf(((TrabajadorEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getId());
+                    idBusqueda = String.valueOf(((TrabajadorEntity)trabajadoresListado.toArray()[(cBoxOpcion.getSelectionModel().getSelectedIndex())]).getId());
                     break;
                 case ("Granja"):
                     idBusqueda = String.valueOf(((GranjaEntity) cBoxOpcion.getSelectionModel().getSelectedItem()).getIdGranja());
@@ -433,7 +438,6 @@ public class ContratosController {
             tablaContratos.getItems().add(new ContratoEntity());
             tablaContratos.getSelectionModel().selectLast();
             tablaContratos.layout();
-            tablaContratos.edit(tablaContratos.getSelectionModel().getSelectedIndex(), colTrabajador);
         } else {
             try {
                 // Deshabilitaria la edicion de campos y ejecutaria el metodo de contratar.
@@ -462,7 +466,7 @@ public class ContratosController {
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
 
             } catch (CrearContratoException ex) {
-                alertErrores("No se han definido todos los campos a la hora de contratar al trabajador");
+                alertErrores("No se han definido todos los campos a la hora de contratar al trabajador.");
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
                 buscarContratos();
             }
@@ -641,7 +645,7 @@ public class ContratosController {
     public void guardarGranja(Event event) {
         LOGGER.log(Level.INFO, "Guardando granja para el contrato");
         contratoInsert.setGranja((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue());
-        idContrato.setTrabajadorId(((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getIdGranja());
+        idContrato.setGranjaId(((GranjaEntity) ((TableColumn.CellEditEvent) event).getNewValue()).getIdGranja());
         boolGranja = true;
 
     }
@@ -669,7 +673,7 @@ public class ContratosController {
         colFechaCon.setEditable(false);
         colTrabajador.setEditable(false);
         colGranja.setEditable(false);
-
+        buscarContratos();
         tablaContratos.refresh();
 
     }
@@ -700,8 +704,7 @@ public class ContratosController {
                         break;
                     case ("Todos"):
                         // Recupera todos los contratos.
-                        contratos = contratoManager.getAllContratos();
-                        // contratos = contratoManager.getContratosGranjero("2");
+                        contratos = contratoManager.getContratosGranjero(String.valueOf(user.getId()));
                         break;
 
                 }
@@ -717,6 +720,8 @@ public class ContratosController {
                         + "que este error persista, contacte con el soporte tecnico.");
                 Logger.getLogger(ContratosController.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else {
+            tipoUsuario(user);
         }
 
     }
@@ -729,6 +734,8 @@ public class ContratosController {
      */
     public void tipoUsuario(UserEntity user) {
         try {
+            System.out.println(user.getUserPrivilege());
+                    
             LOGGER.log(Level.INFO, "Ajustando permisos de acceso en base al usuario.");
             if (user.getUserPrivilege().equals(UserPrivilegeType.TRABAJADOR)) {
                 LOGGER.log(Level.INFO, "Usuario de tipo Trabajador");

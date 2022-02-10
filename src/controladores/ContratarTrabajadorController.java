@@ -91,7 +91,8 @@ public class ContratarTrabajadorController {
     public void setStage(Stage stage1) {
         stage = stage1;
     }
-    public void setUser(UserEntity user){
+
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -107,7 +108,7 @@ public class ContratarTrabajadorController {
 
         stage.setTitle("Contratos");
         stage.setScene(scene);
-        LOGGER.log(Level.INFO,"Llamada a los metodos y restricciones del controlador");
+        LOGGER.log(Level.INFO, "Llamada a los metodos y restricciones del controlador");
         // Interfaces de implementaciones de clases.
         contratoManager = getContratoManagerImplementation();
         granjaManager = new GranjaManagerImplementation();
@@ -299,6 +300,7 @@ public class ContratarTrabajadorController {
             ContratosController controller = ((ContratosController) loader.getController());
             controller.setStage(stage);
             LOGGER.log(Level.INFO, "Inicio del stage de Contratos");
+            controller.setUser(user);
             controller.initStage(root);
 
         } catch (IOException ex) {
@@ -376,6 +378,7 @@ public class ContratarTrabajadorController {
 
     /**
      * Alert de errores que se le mostrara al usuario.
+     *
      * @param message
      */
     public void alertErrores(String message) {

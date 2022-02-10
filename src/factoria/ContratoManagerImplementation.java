@@ -6,6 +6,7 @@
 package factoria;
 
 import clases.ContratoEntity;
+import clases.ContratoId;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
 import interfaces.ContratoInterface;
@@ -91,7 +92,7 @@ public class ContratoManagerImplementation implements ContratoInterface {
      * @throws BDServidorException
      */
     @Override
-    public ContratoEntity getContrato(String idContrato) throws ClienteServidorConexionException, BDServidorException {
+    public ContratoEntity getContrato(ContratoId idContrato) throws ClienteServidorConexionException, BDServidorException {
         ContratoEntity contrato = null;
         try {
             LOGGER.log(Level.INFO, "Iniciando busqueda de contrato");

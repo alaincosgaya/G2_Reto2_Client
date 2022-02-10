@@ -6,6 +6,7 @@
 package interfaces;
 
 import clases.ContratoEntity;
+import clases.ContratoId;
 import excepciones.BDServidorException;
 import excepciones.ClienteServidorConexionException;
 import java.util.Collection;
@@ -44,7 +45,7 @@ public interface ContratoInterface {
      * @throws ClienteServidorConexionException
      * @throws BDServidorException
      */
-    public ContratoEntity getContrato(String idContrato) throws ClienteServidorConexionException, BDServidorException;
+    public ContratoEntity getContrato(ContratoId idContrato) throws ClienteServidorConexionException, BDServidorException;
 
     /**
      * Metodo para la recuperacion de los contratos de un trabajador
